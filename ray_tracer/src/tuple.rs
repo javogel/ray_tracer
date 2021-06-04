@@ -1,4 +1,4 @@
-use std::ops;
+use std::{ops, fmt};
 
 const EPSILON: Scalar = 0.00001;
 
@@ -165,6 +165,23 @@ impl ops::Div<Scalar> for Tuple {
 
     fn div(self, rhs: Scalar) -> Tuple {
         self.divide(rhs)
+    }
+}
+
+impl fmt::Display for Tuple {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let Tuple{x, y, z,  w} = self;
+        write!(f, "{}({}, {}, {})", w, x, y, z)
+    }
+}
+
+impl fmt::Display for TupleType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let type_name = match self {
+            TT::Vector => "Vector",
+            TT::Point => "Point"
+        };
+        write!(f,"{}", type_name)
     }
 }
 

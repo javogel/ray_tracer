@@ -1,5 +1,8 @@
+
+
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub enum TupleType {
-    Point,
-    Vector,
+struct Color {
+    red: f32
+    blue: f32,
+    green: f32
 }

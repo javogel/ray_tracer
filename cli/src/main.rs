@@ -1,3 +1,5 @@
+mod projectile;
+
 fn main() {
-    println!("Hello, world!");
+    projectile::run_simulation()
 }
