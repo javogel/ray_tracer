@@ -1,6 +1,6 @@
-use std::{ops, fmt};
+use std::{fmt, ops};
 
-const EPSILON: Scalar = 0.00001;
+pub const EPSILON: Scalar = 0.00001;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum TupleType {
@@ -8,7 +8,7 @@ pub enum TupleType {
     Vector,
 }
 
-type Scalar = f32;
+pub type Scalar = f32;
 type TT = TupleType;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -170,7 +170,7 @@ impl ops::Div<Scalar> for Tuple {
 
 impl fmt::Display for Tuple {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let Tuple{x, y, z,  w} = self;
+        let Tuple { x, y, z, w } = self;
         write!(f, "{}({}, {}, {})", w, x, y, z)
     }
 }
@@ -179,9 +179,9 @@ impl fmt::Display for TupleType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let type_name = match self {
             TT::Vector => "Vector",
-            TT::Point => "Point"
+            TT::Point => "Point",
         };
-        write!(f,"{}", type_name)
+        write!(f, "{}", type_name)
     }
 }
 
