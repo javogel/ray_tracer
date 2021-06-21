@@ -1,6 +1,6 @@
+use crate::matrix::Matrix;
+use crate::utils::*;
 use std::{fmt, ops};
-
-pub const EPSILON: Scalar = 0.00001;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum TupleType {
@@ -8,10 +8,9 @@ pub enum TupleType {
     Vector,
 }
 
-pub type Scalar = f32;
 type TT = TupleType;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, Copy, PartialEq, Clone)]
 pub struct Tuple {
     pub x: Scalar,
     pub y: Scalar,
@@ -126,6 +125,30 @@ impl Tuple {
             _ => panic!("Dot product can only be calculated on two Vectors"),
         }
     }
+
+    pub fn raw(&self) -> Vec<Scalar> {
+        let tuple_type = match self.w {
+            TT::Point => 1.0,
+            TT::Vector => 0.,
+        };
+        vec![self.x, self.y, self.z, tuple_type]
+    }
+
+    pub fn from_matrix(m: Matrix<f32>) -> Tuple {
+        let dim = m.dimensions();
+        assert!(dim.0 == 4 && dim.1 == 1);
+        let w = match m[3][0] >= 1.0 {
+            true => TT::Point,
+            false => TT::Vector,
+        };
+        println!("{}", w);
+        Tuple {
+            x: m[0][0],
+            y: m[1][0],
+            z: m[2][0],
+            w,
+        }
+    }
 }
 
 impl ops::Add<Tuple> for Tuple {
@@ -167,6 +190,22 @@ impl ops::Div<Scalar> for Tuple {
         self.divide(rhs)
     }
 }
+
+// impl PartialEq for Tuple {
+//     fn eq(&self, other: &Self) -> bool {
+//         let a = self.raw();
+//         let b = other.raw();
+//         if a.len() != b.len() {
+//             return false;
+//         }
+//         for i in 0..a.len() {
+//             if (a[i] - b[i]).abs() > EPSILON {
+//                 return false;
+//             }
+//         }
+//         return true;
+//     }
+// }
 
 impl fmt::Display for Tuple {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
