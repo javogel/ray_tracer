@@ -1,6 +1,6 @@
-use ray_tracer::tuple::*;
 use ray_tracer::canvas::Canvas;
 use ray_tracer::color::color;
+use ray_tracer::tuple::*;
 
 struct Projectile {
     position: Tuple,
@@ -25,10 +25,9 @@ pub fn run_simulation(canvas: &mut Canvas) {
         wind: vector(-0.01, 0., 0.),
     };
     while projectile.position.y > 0. {
-        // println!("{}", &projectile.position);
         tick(&mut projectile, &environment);
         let x = projectile.position.x as usize;
-        let y = canvas.height() - projectile.position.y as usize ;
+        let y = canvas.height() - projectile.position.y as usize;
         canvas.write_pixel(x, y, color(0.9, 0.5, 0.)).unwrap();
     }
 }

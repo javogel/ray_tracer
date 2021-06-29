@@ -1,4 +1,5 @@
 use crate::matrix::Matrix;
+use crate::transforms::*;
 use crate::utils::*;
 use std::{fmt, ops};
 
@@ -10,7 +11,7 @@ pub enum TupleType {
 
 type TT = TupleType;
 
-#[derive(Debug, Copy, PartialEq, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Tuple {
     pub x: Scalar,
     pub y: Scalar,
@@ -141,7 +142,7 @@ impl Tuple {
             true => TT::Point,
             false => TT::Vector,
         };
-        println!("{}", w);
+
         Tuple {
             x: m[0][0],
             y: m[1][0],
@@ -191,21 +192,21 @@ impl ops::Div<Scalar> for Tuple {
     }
 }
 
-// impl PartialEq for Tuple {
-//     fn eq(&self, other: &Self) -> bool {
-//         let a = self.raw();
-//         let b = other.raw();
-//         if a.len() != b.len() {
-//             return false;
-//         }
-//         for i in 0..a.len() {
-//             if (a[i] - b[i]).abs() > EPSILON {
-//                 return false;
-//             }
-//         }
-//         return true;
-//     }
-// }
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Self) -> bool {
+        let a = self.raw();
+        let b = other.raw();
+        if a.len() != b.len() {
+            return false;
+        }
+        for i in 0..a.len() {
+            if (a[i] - b[i]).abs() > EPSILON {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 impl fmt::Display for Tuple {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -221,6 +222,44 @@ impl fmt::Display for TupleType {
             TT::Point => "Point",
         };
         write!(f, "{}", type_name)
+    }
+}
+
+impl Chainable for Tuple {
+    fn rotate_x(self, r: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = rotation_x(r).multiply_matrix(m);
+        Tuple::from_matrix(result)
+    }
+
+    fn rotate_y(self, r: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = rotation_y(r).multiply_matrix(m);
+        Tuple::from_matrix(result)
+    }
+
+    fn rotate_z(self, r: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = rotation_z(r).multiply_matrix(m);
+        Tuple::from_matrix(result)
+    }
+
+    fn scale(self, x: f32, y: f32, z: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = scaling(x, y, z).multiply_matrix(m);
+        Tuple::from_matrix(result)
+    }
+
+    fn translate(self, x: f32, y: f32, z: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = translation(x, y, z).multiply_matrix(m);
+        Tuple::from_matrix(result)
+    }
+
+    fn shear(self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(self);
+        let result = shearing(xy, xz, yx, yz, zx, zy).multiply_matrix(m);
+        Tuple::from_matrix(result)
     }
 }
 
