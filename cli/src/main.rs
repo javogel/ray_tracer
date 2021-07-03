@@ -6,7 +6,7 @@ fn main() {
     // // Chapter 2 Exercise
     // let mut c = canvas(900, 500);
     // projectile::run_simulation(&mut c);
-    // c.save(ImageType::PPM, "image2");
+    // c.save(ImageType::PPM, "chapter2");
 
     // Chapter 4 Exercise
     let mut c = canvas(300, 300);

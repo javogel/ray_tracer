@@ -4,7 +4,7 @@ use crate::utils::*;
 use std::cmp::PartialOrd;
 use std::fmt;
 use std::fmt::Display;
-use std::ops::{self, Add, Mul, Neg, Sub};
+use std::ops::{Add, Index, Mul, Neg, Sub};
 
 #[derive(Debug, Clone)]
 pub struct Matrix<T> {
@@ -187,7 +187,7 @@ impl Chainable for Matrix<f32> {
     }
 }
 
-impl<T> ops::Index<usize> for Matrix<T> {
+impl<T> Index<usize> for Matrix<T> {
     type Output = Vec<T>;
 
     fn index(&self, index: usize) -> &Self::Output {

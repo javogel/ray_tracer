@@ -1,7 +1,8 @@
+#![allow(dead_code)]
+
 use ray_tracer::canvas::Canvas;
 use ray_tracer::color::color;
 use ray_tracer::tuple::*;
-
 struct Projectile {
     position: Tuple,
     velocity: Tuple,
