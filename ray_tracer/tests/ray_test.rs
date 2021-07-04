@@ -33,7 +33,7 @@ fn test_ray_intersect_at_tangent() {
     let r = ray(origin, direction);
     let s = sphere(point(0., 0., 0.), 1.);
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, 5.);
     assert_eq!(xs[1].t, 5.);
@@ -46,7 +46,7 @@ fn test_ray_intersect_misses_sphere() {
     let r = ray(origin, direction);
     let s = sphere(point(0., 0., 0.), 1.);
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
     assert_eq!(xs.count(), 0);
 }
 
@@ -57,7 +57,7 @@ fn test_ray_intersect_inside_sphere() {
     let r = ray(origin, direction);
     let s = sphere(point(0., 0., 0.), 2.);
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, -1.);
@@ -71,7 +71,7 @@ fn test_intersect_sphere_behind_ray() {
     let r = ray(origin, direction);
     let s = sphere(point(0., 0., 0.), 1.);
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, -6.);
@@ -107,7 +107,7 @@ fn test_intersect_sets_object_uuid() {
     let r = ray(origin, direction);
     let s = sphere(point(0., 0., 0.), 1.);
 
-    let xs = intersect(r, s.clone());
+    let xs = intersect(r, &s);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].object_uuid, s.uuid);
@@ -210,7 +210,7 @@ fn test_intersect_scaled_sphere_with_ray() {
 
     s.set_transform(scaling(2., 2., 2.));
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, 3.);
@@ -226,6 +226,6 @@ fn test_intersect_translated_sphere_with_ray() {
 
     s.set_transform(translation(5., 0., 0.));
 
-    let xs = intersect(r, s);
+    let xs = intersect(r, &s);
     assert_eq!(xs.count(), 0);
 }

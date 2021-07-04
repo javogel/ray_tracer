@@ -20,7 +20,7 @@ pub struct Intersection {
 }
 
 pub struct Intersect {
-    pub locations: Vec<Intersection>,
+    locations: Vec<Intersection>,
 }
 
 #[derive(Debug, Clone)]
@@ -40,7 +40,7 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    pub fn intersect(&self, s: Sphere) -> Intersect {
+    pub fn intersect(&self, s: &Sphere) -> Intersect {
         let r = self.transform(&s.transform.inverse().unwrap());
         let sphere_to_ray = r.origin - s.center;
         let a = dot(r.direction, r.direction);
@@ -133,7 +133,7 @@ pub fn sphere(center: Tuple, radius: f32) -> Sphere {
     Sphere::new(center, radius)
 }
 
-pub fn intersect(r: Ray, s: Sphere) -> Intersect {
+pub fn intersect(r: Ray, s: &Sphere) -> Intersect {
     r.intersect(s)
 }
 

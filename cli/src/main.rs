@@ -1,15 +1,13 @@
 mod circle;
 mod projectile;
-use ray_tracer::canvas::*;
 
 fn main() {
     // // Chapter 2 Exercise
-    // let mut c = canvas(900, 500);
-    // projectile::run_simulation(&mut c);
-    // c.save(ImageType::PPM, "chapter2");
+    // projectile::draw_chapter_2_exercise();
 
     // Chapter 4 Exercise
-    let mut c = canvas(300, 300);
-    circle::draw_on(&mut c);
-    c.save(ImageType::PPM, "chapter4");
+    // circle::draw_chapter_4_exercise();
+
+    // Chapter 5 Exercise
+    circle::draw_chapter_5_exercise();
 }
