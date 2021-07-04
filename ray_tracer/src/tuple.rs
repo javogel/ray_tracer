@@ -225,7 +225,7 @@ impl fmt::Display for TupleType {
     }
 }
 
-impl Chainable for Tuple {
+impl Transformations for Tuple {
     fn rotate_x(self, r: f32) -> Tuple {
         let m = Matrix::<f32>::from_tuple(self);
         let result = rotation_x(r).multiply_matrix(m);

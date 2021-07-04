@@ -51,7 +51,7 @@ where
         let (ay, ax) = self.dimensions();
         let (by, bx) = other.dimensions();
         assert!(ax == by);
-        let mut m = matrix(bx, ay);
+        let mut m = Matrix::<f32>::new(bx, ay);
         for row in 0..ay {
             for col in 0..bx {
                 let mut total: f32 = 0.;
@@ -161,7 +161,16 @@ where
     }
 }
 
-impl Chainable for Matrix<f32> {
+impl Matrix<Scalar> {
+    pub fn multiply_tuple(&self, other: Tuple) -> Tuple {
+        let m = Matrix::<f32>::from_tuple(other);
+        let result = self.multiply_matrix(m);
+
+        Tuple::from_matrix(result)
+    }
+}
+
+impl Transformations for Matrix<f32> {
     fn rotate_x(self, r: f32) -> Matrix<f32> {
         rotation_x(r).multiply_matrix(self)
     }
@@ -244,10 +253,15 @@ impl Mul<Tuple> for Matrix<f32> {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(rhs);
-        let result = self.multiply_matrix(m);
+        self.multiply_tuple(rhs)
+    }
+}
 
-        Tuple::from_matrix(result)
+impl Mul<Tuple> for &Matrix<f32> {
+    type Output = Tuple;
+
+    fn mul(self, rhs: Tuple) -> Tuple {
+        self.multiply_tuple(rhs)
     }
 }
 
@@ -266,4 +280,13 @@ where
 
 pub fn matrix(cols: usize, rows: usize) -> Matrix<f32> {
     Matrix::<f32>::new(cols, rows)
+}
+
+pub fn identity() -> Matrix<f32> {
+    Matrix::from(vec![
+        vec![1., 0., 0., 0.],
+        vec![0., 1., 0., 0.],
+        vec![0., 0., 1., 0.],
+        vec![0., 0., 0., 1.],
+    ])
 }

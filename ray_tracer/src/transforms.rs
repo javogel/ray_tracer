@@ -1,6 +1,6 @@
 use crate::matrix::Matrix;
 
-pub trait Chainable {
+pub trait Transformations {
     fn rotate_x(self, r: f32) -> Self;
     fn rotate_y(self, r: f32) -> Self;
     fn rotate_z(self, r: f32) -> Self;

@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
-use crate::{tuple::*, utils::EPSILON};
-use std::{
-    iter::{FromIterator, TakeWhile},
-    ops::Index,
-    vec,
+use crate::{
+    matrix::{identity, Matrix},
+    tuple::*,
+    utils::EPSILON,
 };
+use std::{ops::Index, vec};
 use uuid::Uuid;
 
 pub struct Ray {
@@ -20,7 +20,7 @@ pub struct Intersection {
 }
 
 pub struct Intersect {
-    locations: Vec<Intersection>,
+    pub locations: Vec<Intersection>,
 }
 
 #[derive(Debug, Clone)]
@@ -28,6 +28,7 @@ pub struct Sphere {
     pub uuid: Uuid,
     center: Tuple,
     radius: f32,
+    pub transform: Matrix<f32>,
 }
 
 impl Ray {
@@ -40,9 +41,10 @@ impl Ray {
     }
 
     pub fn intersect(&self, s: Sphere) -> Intersect {
-        let sphere_to_ray = self.origin - s.center;
-        let a = dot(self.direction, self.direction);
-        let b = dot(self.direction, sphere_to_ray) * 2.;
+        let r = self.transform(&s.transform.inverse().unwrap());
+        let sphere_to_ray = r.origin - s.center;
+        let a = dot(r.direction, r.direction);
+        let b = dot(r.direction, sphere_to_ray) * 2.;
         let c = dot(sphere_to_ray, sphere_to_ray) - 1.;
 
         let discriminant = b * b - a * c * 4.;
@@ -64,6 +66,13 @@ impl Ray {
         };
 
         Intersect { locations }
+    }
+
+    pub fn transform(&self, transformation: &Matrix<f32>) -> Self {
+        Self {
+            direction: transformation * self.direction,
+            origin: transformation * self.origin,
+        }
     }
 }
 
@@ -104,13 +113,24 @@ pub fn ray(origin: Tuple, direction: Tuple) -> Ray {
     Ray::new(origin, direction)
 }
 
-pub fn sphere(center: Tuple, radius: f32) -> Sphere {
-    let uuid = Uuid::new_v4();
-    Sphere {
-        uuid,
-        center,
-        radius,
+impl Sphere {
+    pub fn new(center: Tuple, radius: f32) -> Self {
+        let uuid = Uuid::new_v4();
+        let transform = identity();
+        Sphere {
+            uuid,
+            center,
+            radius,
+            transform,
+        }
     }
+    pub fn set_transform(&mut self, transform: Matrix<f32>) {
+        self.transform = transform;
+    }
+}
+
+pub fn sphere(center: Tuple, radius: f32) -> Sphere {
+    Sphere::new(center, radius)
 }
 
 pub fn intersect(r: Ray, s: Sphere) -> Intersect {

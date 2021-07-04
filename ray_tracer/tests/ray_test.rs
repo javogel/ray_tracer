@@ -1,4 +1,7 @@
+use ray_tracer::matrix::identity;
 use ray_tracer::ray::*;
+use ray_tracer::transforms::scaling;
+use ray_tracer::transforms::translation;
 use ray_tracer::tuple::*;
 
 #[test]
@@ -155,4 +158,74 @@ fn test_hit_as_lowest_nonnegative_t() {
     let xs = intersections(vec![i1, i2, i3, i4.clone()]);
 
     assert_eq!(xs.hit(), Some(i4));
+}
+
+#[test]
+fn test_translating_a_ray() {
+    let origin = point(1., 2., 3.);
+    let direction = vector(0., 1., 0.);
+    let r = ray(origin, direction);
+
+    let translation = translation(3., 4., 5.);
+    let Ray { origin, direction } = r.transform(&translation);
+
+    assert_eq!(origin, point(4., 6., 8.));
+    assert_eq!(direction, vector(0., 1., 0.));
+}
+
+#[test]
+fn test_scaling_a_ray() {
+    let origin = point(1., 2., 3.);
+    let direction = vector(0., 1., 0.);
+    let r = ray(origin, direction);
+
+    let transform = scaling(2., 3., 4.);
+    let Ray { origin, direction } = r.transform(&transform);
+
+    assert_eq!(origin, point(2., 6., 12.));
+    assert_eq!(direction, vector(0., 3., 0.));
+}
+
+#[test]
+fn test_sphere_default_transform() {
+    let s = sphere(point(0., 0., 0.), 1.);
+
+    assert_eq!(s.transform, identity());
+}
+
+#[test]
+fn test_change_to_sphere_transform() {
+    let mut s = sphere(point(0., 0., 0.), 1.);
+    let t = translation(2., 3., 4.);
+    s.set_transform(t.clone());
+    assert_eq!(s.transform, t);
+}
+
+#[test]
+fn test_intersect_scaled_sphere_with_ray() {
+    let origin = point(0., 0., -5.);
+    let direction = vector(0., 0., 1.);
+    let r = ray(origin, direction);
+    let mut s = sphere(point(0., 0., 0.), 1.);
+
+    s.set_transform(scaling(2., 2., 2.));
+
+    let xs = intersect(r, s);
+
+    assert_eq!(xs.count(), 2);
+    assert_eq!(xs[0].t, 3.);
+    assert_eq!(xs[1].t, 7.);
+}
+
+#[test]
+fn test_intersect_translated_sphere_with_ray() {
+    let origin = point(0., 0., -5.);
+    let direction = vector(0., 0., 1.);
+    let r = ray(origin, direction);
+    let mut s = sphere(point(0., 0., 0.), 1.);
+
+    s.set_transform(translation(5., 0., 0.));
+
+    let xs = intersect(r, s);
+    assert_eq!(xs.count(), 0);
 }
