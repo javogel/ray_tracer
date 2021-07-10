@@ -36,8 +36,8 @@ pub fn draw_chapter_5_exercise() {
 
     let mut c = canvas(canvas_pixels, canvas_pixels);
     let shape_color = color(1.0, 0., 0.);
-    let shape = sphere(point(0., 0., 0.), 1.);
-
+    let mut shape = sphere(point(0., 0., 0.), 1.);
+    shape.transform = shearing(1.0, 0., 0., 0., 0., 0.) * scaling(0.5, 1., 1.);
     for y in 0..canvas_pixels {
         let world_y = half - pixel_size * (y as f32);
 
@@ -55,5 +55,5 @@ pub fn draw_chapter_5_exercise() {
         }
     }
 
-    c.save(ImageType::PPM, "chapter5");
+    c.save(ImageType::PPM, "chapter5-skewed");
 }
