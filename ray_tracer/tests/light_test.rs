@@ -1,0 +1,78 @@
+use ray_tracer::{
+    color::color,
+    light::{lighting, point_light},
+    material::material,
+    tuple::{point, vector},
+};
+
+#[test]
+fn point_light_has_intensity_and_position() {
+    let intensity = color(1., 1., 1.);
+    let position = point(0., 0., 0.);
+
+    let light = point_light(position, intensity);
+    assert_eq!(light.intensity, intensity);
+    assert_eq!(light.position, position);
+}
+
+#[test]
+fn lighting_with_eye_between_light_and_surface() {
+    let m = material();
+    let position = point(0., 0., 0.);
+    let eyev = vector(0., 0., -1.);
+    let normalv = vector(0., 0., -1.);
+    let light = point_light(point(0., 0., -10.), color(1., 1., 1.));
+    let result = lighting(&m, &light, position, eyev, normalv);
+
+    assert_eq!(result, color(1.9, 1.9, 1.9));
+}
+
+#[test]
+fn lighting_with_eye_between_light_and_surface_and_eye_offset_45() {
+    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let m = material();
+    let position = point(0., 0., 0.);
+    let eyev = vector(0., sqrt_of_2_over_2, sqrt_of_2_over_2);
+    let normalv = vector(0., 0., -1.);
+    let light = point_light(point(0., 0., -10.), color(1., 1., 1.));
+    let result = lighting(&m, &light, position, eyev, normalv);
+
+    assert_eq!(result, color(1., 1., 1.));
+}
+
+#[test]
+fn lighting_with_eye_opposite_surface_and_light_offset_45() {
+    let m = material();
+    let position = point(0., 0., 0.);
+    let eyev = vector(0., 0., -1.);
+    let normalv = vector(0., 0., -1.);
+    let light = point_light(point(0., 10., -10.), color(1., 1., 1.));
+    let result = lighting(&m, &light, position, eyev, normalv);
+
+    assert_eq!(result, color(0.7364, 0.7364, 0.7364));
+}
+
+#[test]
+fn lighting_with_eye_in_path_of_reflection_vector() {
+    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let m = material();
+    let position = point(0., 0., 0.);
+    let eyev = vector(0., -sqrt_of_2_over_2, -sqrt_of_2_over_2);
+    let normalv = vector(0., 0., -1.);
+    let light = point_light(point(0., 10., -10.), color(1., 1., 1.));
+    let result = lighting(&m, &light, position, eyev, normalv);
+
+    assert_eq!(result, color(1.6464, 1.6464, 1.6464));
+}
+
+#[test]
+fn lighting_with_light_behind_surface() {
+    let m = material();
+    let position = point(0., 0., 0.);
+    let eyev = vector(0., 0., -1.);
+    let normalv = vector(0., 0., -1.);
+    let light = point_light(point(0., 0., 10.), color(1., 1., 1.));
+    let result = lighting(&m, &light, position, eyev, normalv);
+
+    assert_eq!(result, color(0.1, 0.1, 0.1));
+}

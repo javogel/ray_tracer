@@ -1,7 +1,7 @@
 use ray_tracer::tuple::*;
 
 #[test]
-fn test_is_a_vector() {
+fn is_a_vector_returns_false_for_point() {
     let point = Tuple {
         x: 4.3,
         y: -4.2,
@@ -9,7 +9,10 @@ fn test_is_a_vector() {
         w: TupleType::Point,
     };
     assert_eq!(is_a_vector(point), false);
+}
 
+#[test]
+fn is_a_vector_returns_true_for_vector() {
     let vector = Tuple {
         x: 4.3,
         y: -4.2,
@@ -20,27 +23,27 @@ fn test_is_a_vector() {
 }
 
 #[test]
-fn test_point() {
+fn point_creation() {
     let Tuple { x, y, z, w } = point(4., -4., 3.);
     assert_eq!((x, y, z), (4., -4., 3.));
     assert_eq!(w, TupleType::Point);
 }
 
 #[test]
-fn test_vector() {
+fn vector_creation() {
     let Tuple { x, y, z, w } = vector(4., -4., 3.);
     assert_eq!((x, y, z), (4., -4., 3.));
     assert_eq!(w, TupleType::Vector);
 }
 
 #[test]
-fn test_equal() {
+fn equal_function() {
     assert_eq!(equal(1.0, 1.0), true);
     assert_eq!(equal(1.0, 2.0), false);
 }
 
 #[test]
-fn test_add() {
+fn add_tuples() {
     let a = vector(3., -2., 5.);
     let b = point(-2., 3., 1.);
     let result = point(1., 1., 6.);
@@ -49,7 +52,7 @@ fn test_add() {
 }
 
 #[test]
-fn test_subtract() {
+fn subtract_tuples() {
     let a = point(3., 2., 1.);
     let mut b = point(5., 6., 7.);
     assert_eq!(subtract(a, b), vector(-2., -4., -6.));
@@ -64,13 +67,13 @@ fn test_subtract() {
 }
 
 #[test]
-fn test_negate() {
+fn negate_tuples() {
     let a = point(3., 2., 1.);
     assert_eq!(negate(a), point(-3., -2., -1.));
 }
 
 #[test]
-fn test_multiply() {
+fn multiply_tuples() {
     let a = point(1., -2., 3.);
     let mut s = 2.0;
     assert_eq!(multiply(a, s), point(2., -4., 6.));
@@ -80,14 +83,14 @@ fn test_multiply() {
 }
 
 #[test]
-fn test_divide() {
+fn divide_tuples() {
     let a = point(1., -2., 3.);
     let s = 2.0;
     assert_eq!(divide(a, s), point(0.5, -1., 1.5));
 }
 
 #[test]
-fn test_magnitude() {
+fn magnitude_of_tuples() {
     let mut m = magnitude(vector(1., 0., 0.));
     assert_eq!(m, 1.0);
 
@@ -105,7 +108,7 @@ fn test_magnitude() {
 }
 
 #[test]
-fn test_normalize() {
+fn normalize_tuples() {
     let mut n = normalize(vector(4., 0., 0.));
     assert_eq!(n, vector(1., 0., 0.));
 
@@ -116,7 +119,7 @@ fn test_normalize() {
 }
 
 #[test]
-fn test_dot() {
+fn dot_product_on_tuples() {
     let a = vector(1., 2., 3.);
     let b = vector(2., 3., 4.);
     let d = dot(a, b);
@@ -124,9 +127,26 @@ fn test_dot() {
 }
 
 #[test]
-fn test_cross() {
+fn cross_product_on_vectors() {
     let a = vector(1., 2., 3.);
     let b = vector(2., 3., 4.);
     assert_eq!(cross(a, b), vector(-1., 2., -1.));
     assert_eq!(cross(b, a), vector(1., -2., 1.));
+}
+
+#[test]
+fn reflect_a_vector_approaching_at_45_degrees() {
+    let v = vector(1., -1., 0.);
+    let b = vector(0., 1., 0.);
+    let reflection = v.reflect(b);
+    assert_eq!(reflection, vector(1., 1., 0.));
+}
+
+#[test]
+fn reflect_a_vector_off_slanted_surface() {
+    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let v = vector(0., -1., 0.);
+    let b = vector(sqrt_of_2_over_2, sqrt_of_2_over_2, 0.);
+    let reflection = v.reflect(b);
+    assert_eq!(reflection, vector(1., 0., 0.));
 }

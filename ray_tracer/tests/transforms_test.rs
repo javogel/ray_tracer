@@ -3,7 +3,7 @@ use ray_tracer::tuple::*;
 use std::f32::consts::PI;
 
 #[test]
-fn test_point_translation() {
+fn point_translation() {
     let transform = translation(5., -3., 2.);
 
     let p = point(-3., 4., 5.);
@@ -14,7 +14,7 @@ fn test_point_translation() {
 }
 
 #[test]
-fn test_vector_translation() {
+fn vector_translation() {
     let transform = translation(5., -3., 2.);
 
     let v = vector(-3., 4., 5.);
@@ -23,7 +23,7 @@ fn test_vector_translation() {
 }
 
 #[test]
-fn test_point_scaling() {
+fn point_scaling() {
     let transform = scaling(2., 3., 4.);
 
     let p = point(-4., 6., 8.);
@@ -31,7 +31,7 @@ fn test_point_scaling() {
 }
 
 #[test]
-fn test_vector_scaling() {
+fn vector_scaling() {
     let transform = scaling(2., 3., 4.);
 
     let v = vector(-4., 6., 8.);
@@ -42,7 +42,7 @@ fn test_vector_scaling() {
 }
 
 #[test]
-fn test_reflection_scaling() {
+fn reflection_scaling() {
     let transform = scaling(-1., 1., 1.);
 
     let p = point(2., 3., 4.);
@@ -50,7 +50,7 @@ fn test_reflection_scaling() {
 }
 
 #[test]
-fn test_rotation_x_axis() {
+fn rotation_x_axis() {
     let half_quarter = rotation_x(PI / 4.);
     let full_quarter = rotation_x(PI / 2.);
 
@@ -71,7 +71,7 @@ fn test_rotation_x_axis() {
 }
 
 #[test]
-fn test_rotation_inverse() {
+fn rotation_inverse() {
     let half_quarter = rotation_x(PI / 4.);
     let p = point(0., 1., 0.);
     let square_root_of_2 = (2. as f32).sqrt();
@@ -83,7 +83,7 @@ fn test_rotation_inverse() {
 }
 
 #[test]
-fn test_rotation_y_axis() {
+fn rotation_y_axis() {
     let half_quarter = rotation_y(PI / 4.);
     let full_quarter = rotation_y(PI / 2.);
 
@@ -99,7 +99,7 @@ fn test_rotation_y_axis() {
 }
 
 #[test]
-fn test_rotation_z_axis() {
+fn rotation_z_axis() {
     let half_quarter = rotation_z(PI / 4.);
     let full_quarter = rotation_z(PI / 2.);
 
@@ -115,7 +115,7 @@ fn test_rotation_z_axis() {
 }
 
 #[test]
-fn test_shearing() {
+fn shearing_transform() {
     let p = point(2.0, 3.0, 4.0);
 
     let mut transform = shearing(1.0, 0., 0., 0., 0., 0.);
@@ -138,7 +138,7 @@ fn test_shearing() {
 }
 
 #[test]
-fn test_sequence_of_transformations() {
+fn sequence_of_transformations() {
     let p = point(1.0, 0., 1.);
     let a = rotation_x(PI / 2.);
     let b = scaling(5., 5., 5.);
@@ -155,7 +155,7 @@ fn test_sequence_of_transformations() {
 }
 
 #[test]
-fn test_chained_transformations() {
+fn chained_transformations() {
     let p = point(1.0, 0., 1.);
     let a = rotation_x(PI / 2.);
     let b = scaling(5., 5., 5.);
@@ -165,7 +165,7 @@ fn test_chained_transformations() {
 }
 
 #[test]
-fn test_chained_transformations_api() {
+fn chained_transformations_api() {
     let p = point(1.0, 0., 1.)
         .rotate_x(PI / 2.)
         .scale(5., 5., 5.)

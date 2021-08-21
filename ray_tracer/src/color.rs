@@ -104,3 +104,7 @@ where
 pub fn subtract(a: Color, b: Color) -> Color {
     a - b
 }
+
+pub fn black() -> Color {
+    color(0., 0., 0.)
+}

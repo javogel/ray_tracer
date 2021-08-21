@@ -1,10 +1,6 @@
 #![allow(dead_code)]
 
-use crate::{
-    matrix::{identity, Matrix},
-    tuple::*,
-    utils::EPSILON,
-};
+use crate::{matrix::Matrix, shapes::sphere::*, tuple::*, utils::EPSILON};
 use std::{ops::Index, vec};
 use uuid::Uuid;
 
@@ -20,15 +16,7 @@ pub struct Intersection {
 }
 
 pub struct Intersect {
-    locations: Vec<Intersection>,
-}
-
-#[derive(Debug, Clone)]
-pub struct Sphere {
-    pub uuid: Uuid,
-    center: Tuple,
-    radius: f32,
-    pub transform: Matrix<f32>,
+    pub locations: Vec<Intersection>,
 }
 
 impl Ray {
@@ -113,27 +101,7 @@ pub fn ray(origin: Tuple, direction: Tuple) -> Ray {
     Ray::new(origin, direction)
 }
 
-impl Sphere {
-    pub fn new(center: Tuple, radius: f32) -> Self {
-        let uuid = Uuid::new_v4();
-        let transform = identity();
-        Sphere {
-            uuid,
-            center,
-            radius,
-            transform,
-        }
-    }
-    pub fn set_transform(&mut self, transform: Matrix<f32>) {
-        self.transform = transform;
-    }
-}
-
-pub fn sphere(center: Tuple, radius: f32) -> Sphere {
-    Sphere::new(center, radius)
-}
-
-pub fn intersect(r: Ray, s: &Sphere) -> Intersect {
+pub fn intersect(r: &Ray, s: &Sphere) -> Intersect {
     r.intersect(s)
 }
 

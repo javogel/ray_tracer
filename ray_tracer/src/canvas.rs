@@ -1,6 +1,4 @@
-// use std::io;
 use crate::color::*;
-// use rand::Rng;
 
 pub struct Dimensions {
     pub width: usize,

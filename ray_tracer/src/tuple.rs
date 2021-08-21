@@ -98,7 +98,7 @@ impl Tuple {
         }
     }
 
-    fn normalize(&self) -> Tuple {
+    pub fn normalize(&self) -> Tuple {
         match self.w {
             TT::Vector => {
                 let m = self.magnitude();
@@ -123,7 +123,14 @@ impl Tuple {
                 z: self.x * b.y - self.y * b.x,
                 w: TT::Vector,
             },
-            _ => panic!("Dot product can only be calculated on two Vectors"),
+            _ => panic!("Cross product can only be calculated on two Vectors"),
+        }
+    }
+
+    pub fn reflect(self, normal: Tuple) -> Tuple {
+        match (self.w, normal.w) {
+            (TT::Vector, TT::Vector) => self - normal * 2. * self.dot(normal),
+            _ => panic!("Reflection can only be calculated on two vectors"),
         }
     }
 
@@ -327,4 +334,8 @@ pub fn dot(a: Tuple, b: Tuple) -> f32 {
 
 pub fn cross(a: Tuple, b: Tuple) -> Tuple {
     a.cross(b)
+}
+
+pub fn reflect(v: Tuple, normal: Tuple) -> Tuple {
+    v.reflect(normal)
 }
