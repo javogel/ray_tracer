@@ -45,3 +45,7 @@ impl Sphere {
 pub fn sphere(center: Tuple, radius: f32) -> Sphere {
     Sphere::new(center, radius)
 }
+
+pub fn default_sphere() -> Sphere {
+    Sphere::new(point(0., 0., 0.), 1.)
+}

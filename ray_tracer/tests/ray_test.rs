@@ -1,5 +1,5 @@
-use ray_tracer::matrix::identity;
 use ray_tracer::ray::*;
+use ray_tracer::shapes::object::*;
 use ray_tracer::shapes::sphere::*;
 use ray_tracer::transforms::scaling;
 use ray_tracer::transforms::translation;
@@ -32,9 +32,9 @@ fn ray_intersect_at_tangent() {
     let origin = point(0., 1., -5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let s = sphere(point(0., 0., 0.), 1.);
 
-    let xs = intersect(&r, &s);
+    let shape = Object::new_sphere();
+    let xs = intersect(&r, &shape);
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, 5.);
     assert_eq!(xs[1].t, 5.);
@@ -45,9 +45,8 @@ fn ray_intersect_misses_sphere() {
     let origin = point(0., 2., -5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let s = sphere(point(0., 0., 0.), 1.);
-
-    let xs = intersect(&r, &s);
+    let shape = Object::new_sphere();
+    let xs = intersect(&r, &shape);
     assert_eq!(xs.count(), 0);
 }
 
@@ -56,9 +55,8 @@ fn ray_intersect_inside_sphere() {
     let origin = point(0., 0., 0.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let s = sphere(point(0., 0., 0.), 1.);
-
-    let xs = intersect(&r, &s);
+    let shape = Object::new_sphere();
+    let xs = intersect(&r, &shape);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, -1.);
@@ -70,9 +68,8 @@ fn intersect_sphere_behind_ray() {
     let origin = point(0., 0., 5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let s = sphere(point(0., 0., 0.), 1.);
-
-    let xs = intersect(&r, &s);
+    let shape = Object::new_sphere();
+    let xs = intersect(&r, &shape);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, -6.);
@@ -81,24 +78,24 @@ fn intersect_sphere_behind_ray() {
 
 #[test]
 fn intersect_contains_t_and_uuid() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i = intersection(3.5, s.uuid);
+    let shape = Object::new_sphere();
+    let i = intersection(3.5, &shape);
 
     assert_eq!(i.t, 3.5);
-    assert_eq!(i.object_uuid, s.uuid);
+    assert_eq!(i.object.uuid(), shape.uuid());
 }
 
 #[test]
 fn aggregating_intersections() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i1 = intersection(1., s.uuid);
-    let i2 = intersection(2., s.uuid);
+    let shape = Object::new_sphere();
+    let i1 = intersection(1., &shape);
+    let i2 = intersection(2., &shape);
 
     let xs = intersections(vec![i1, i2]);
 
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs[0].object_uuid, s.uuid);
-    assert_eq!(xs[1].object_uuid, s.uuid);
+    assert_eq!(xs[0].object.uuid(), shape.uuid());
+    assert_eq!(xs[1].object.uuid(), shape.uuid());
 }
 
 #[test]
@@ -106,20 +103,20 @@ fn intersect_sets_object_uuid() {
     let origin = point(0., 0., -5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let s = sphere(point(0., 0., 0.), 1.);
-
-    let xs = intersect(&r, &s);
+    let shape = Object::new_sphere();
+    let xs = intersect(&r, &shape);
 
     assert_eq!(xs.count(), 2);
-    assert_eq!(xs[0].object_uuid, s.uuid);
-    assert_eq!(xs[1].object_uuid, s.uuid);
+
+    assert_eq!(xs[0].object.uuid(), shape.uuid());
+    assert_eq!(xs[1].object.uuid(), shape.uuid());
 }
 
 #[test]
 fn hit_when_intersections_have_positive_t() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i1 = intersection(1., s.uuid);
-    let i2 = intersection(2., s.uuid);
+    let shape = Object::new_sphere();
+    let i1 = intersection(1., &shape);
+    let i2 = intersection(2., &shape);
 
     let xs = intersections(vec![i2, i1.clone()]);
 
@@ -128,9 +125,9 @@ fn hit_when_intersections_have_positive_t() {
 
 #[test]
 fn hit_when_intersections_have_negative_t() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i1 = intersection(-1., s.uuid);
-    let i2 = intersection(1., s.uuid);
+    let shape = Object::new_sphere();
+    let i1 = intersection(-1., &shape);
+    let i2 = intersection(1., &shape);
 
     let xs = intersections(vec![i2.clone(), i1]);
 
@@ -139,9 +136,9 @@ fn hit_when_intersections_have_negative_t() {
 
 #[test]
 fn hit_when_all_intersections_have_negative_t() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i1 = intersection(-2., s.uuid);
-    let i2 = intersection(-1., s.uuid);
+    let shape = Object::new_sphere();
+    let i1 = intersection(-2., &shape);
+    let i2 = intersection(-1., &shape);
 
     let xs = intersections(vec![i2, i1]);
 
@@ -150,11 +147,11 @@ fn hit_when_all_intersections_have_negative_t() {
 
 #[test]
 fn hit_as_lowest_nonnegative_t() {
-    let s = sphere(point(0., 0., 0.), 1.);
-    let i1 = intersection(5., s.uuid);
-    let i2 = intersection(7., s.uuid);
-    let i3 = intersection(-3., s.uuid);
-    let i4 = intersection(2., s.uuid);
+    let shape = &Object::new_sphere();
+    let i1 = intersection(5., shape);
+    let i2 = intersection(7., shape);
+    let i3 = intersection(-3., shape);
+    let i4 = intersection(2., shape);
 
     let xs = intersections(vec![i1, i2, i3, i4.clone()]);
 
@@ -188,30 +185,15 @@ fn scaling_a_ray() {
 }
 
 #[test]
-fn sphere_default_transform() {
-    let s = sphere(point(0., 0., 0.), 1.);
-
-    assert_eq!(s.transform, identity());
-}
-
-#[test]
-fn change_to_sphere_transform() {
-    let mut s = sphere(point(0., 0., 0.), 1.);
-    let t = translation(2., 3., 4.);
-    s.set_transform(t.clone());
-    assert_eq!(s.transform, t);
-}
-
-#[test]
 fn intersect_scaled_sphere_with_ray() {
     let origin = point(0., 0., -5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let mut s = sphere(point(0., 0., 0.), 1.);
+    let mut s = default_sphere();
 
     s.set_transform(scaling(2., 2., 2.));
-
-    let xs = intersect(&r, &s);
+    let shape = &Object::Sphere(s);
+    let xs = intersect(&r, shape);
 
     assert_eq!(xs.count(), 2);
     assert_eq!(xs[0].t, 3.);
@@ -223,10 +205,9 @@ fn intersect_translated_sphere_with_ray() {
     let origin = point(0., 0., -5.);
     let direction = vector(0., 0., 1.);
     let r = ray(origin, direction);
-    let mut s = sphere(point(0., 0., 0.), 1.);
 
-    s.set_transform(translation(5., 0., 0.));
-
-    let xs = intersect(&r, &s);
+    let mut shape = Object::new_sphere();
+    shape.set_transform(translation(5., 0., 0.));
+    let xs = intersect(&r, &shape);
     assert_eq!(xs.count(), 0);
 }

@@ -1,8 +1,13 @@
-#![allow(dead_code)]
+// #![allow(dead_code)]
 
-use crate::{matrix::Matrix, shapes::sphere::*, tuple::*, utils::EPSILON};
+use crate::{
+    matrix::Matrix,
+    shapes::{object::*, sphere::*},
+    tuple::*,
+    utils::EPSILON,
+};
 use std::{ops::Index, vec};
-use uuid::Uuid;
+// use uuid::Uuid;
 
 pub struct Ray {
     pub origin: Tuple,
@@ -10,13 +15,13 @@ pub struct Ray {
 }
 
 #[derive(Debug, Clone)]
-pub struct Intersection {
+pub struct Intersection<'a> {
     pub t: f32,
-    pub object_uuid: Uuid,
+    pub object: &'a Object,
 }
 
-pub struct Intersect {
-    pub locations: Vec<Intersection>,
+pub struct Intersect<'a> {
+    pub locations: Vec<Intersection<'a>>,
 }
 
 impl Ray {
@@ -28,12 +33,20 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    pub fn intersect(&self, s: &Sphere) -> Intersect {
+    fn calc_sphere(&self, s: &Sphere) -> (f32, f32, f32) {
         let r = self.transform(&s.transform.inverse().unwrap());
         let sphere_to_ray = r.origin - s.center;
         let a = dot(r.direction, r.direction);
         let b = dot(r.direction, sphere_to_ray) * 2.;
         let c = dot(sphere_to_ray, sphere_to_ray) - 1.;
+
+        (a, b, c)
+    }
+
+    pub fn intersect<'a>(&self, s: &'a Object) -> Intersect<'a> {
+        let (a, b, c) = match s {
+            Object::Sphere(s) => self.calc_sphere(s),
+        };
 
         let discriminant = b * b - a * c * 4.;
 
@@ -43,8 +56,8 @@ impl Ray {
             let t1 = (-b - discriminant.sqrt()) / (a * 2.);
             let t2 = (-b + discriminant.sqrt()) / (a * 2.);
 
-            let i1 = intersection(t1, s.uuid);
-            let i2 = intersection(t2, s.uuid);
+            let i1 = intersection(t1, s);
+            let i2 = intersection(t2, s);
 
             if i1.t < i2.t {
                 vec![i1, i2]
@@ -64,7 +77,7 @@ impl Ray {
     }
 }
 
-impl Intersect {
+impl<'a> Intersect<'a> {
     pub fn count(&self) -> usize {
         self.locations.len()
     }
@@ -79,8 +92,8 @@ impl Intersect {
     }
 }
 
-impl Index<usize> for Intersect {
-    type Output = Intersection;
+impl<'a> Index<usize> for Intersect<'a> {
+    type Output = Intersection<'a>;
 
     fn index(&self, index: usize) -> &Self::Output {
         return match self.locations.len() {
@@ -91,9 +104,12 @@ impl Index<usize> for Intersect {
     }
 }
 
-impl PartialEq for Intersection {
+impl<'a> PartialEq for Intersection<'a> {
     fn eq(&self, other: &Intersection) -> bool {
-        self.t - other.t < EPSILON && self.object_uuid == other.object_uuid
+        if self.t - other.t > EPSILON {
+            return false;
+        }
+        self.object == other.object
     }
 }
 
@@ -101,12 +117,12 @@ pub fn ray(origin: Tuple, direction: Tuple) -> Ray {
     Ray::new(origin, direction)
 }
 
-pub fn intersect(r: &Ray, s: &Sphere) -> Intersect {
+pub fn intersect<'a>(r: &'a Ray, s: &'a Object) -> Intersect<'a> {
     r.intersect(s)
 }
 
-pub fn intersection(t: f32, object_uuid: Uuid) -> Intersection {
-    Intersection { t, object_uuid }
+pub fn intersection<'a>(t: f32, object: &'a Object) -> Intersection<'a> {
+    Intersection { t, object }
 }
 
 pub fn intersections(locations: Vec<Intersection>) -> Intersect {

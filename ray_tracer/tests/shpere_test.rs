@@ -1,5 +1,6 @@
 use ray_tracer::{
     material::material,
+    matrix::identity,
     shapes::sphere::*,
     transforms::{rotation_z, scaling, translation},
     tuple::*,
@@ -86,4 +87,19 @@ fn sphere_can_be_assigned_material() {
     m.ambient = 1.0;
     s.material = m.clone();
     assert_eq!(s.material, m);
+}
+
+#[test]
+fn sphere_default_transform() {
+    let s = default_sphere();
+
+    assert_eq!(s.transform, identity());
+}
+
+#[test]
+fn change_to_sphere_transform() {
+    let mut s = default_sphere();
+    let t = translation(2., 3., 4.);
+    s.set_transform(t.clone());
+    assert_eq!(s.transform, t);
 }
