@@ -1,11 +1,12 @@
 use crate::{
     color::{color, Color},
-    light::{lighting, point_light, PointLight},
+    light::{is_shadowed, lighting, point_light, PointLight},
     material::Material,
     ray::{Intersect, Intersection, Ray},
     shapes::object::Object,
     transforms::scaling,
     tuple::{point, Tuple},
+    utils::EPSILON,
 };
 
 pub struct World {
@@ -28,11 +29,20 @@ impl World {
     }
 
     pub fn shade_hit<'a>(&self, c: &'a PreparedComputations) -> Color {
-        return lighting(c.object.material(), &self.light, c.point, c.eyev, c.normalv);
+        let shadowed = is_shadowed(self, c.over_point);
+        return lighting(
+            c.object.material(),
+            &self.light,
+            c.point,
+            c.eyev,
+            c.normalv,
+            shadowed,
+        );
     }
 
     pub fn color_at(&self, r: &Ray) -> Color {
         let intersections = self.intersect(r);
+
         return match intersections.hit() {
             Some(i) => {
                 let comps = prepare_computations(&i, r);
@@ -71,6 +81,7 @@ pub struct PreparedComputations<'a> {
     pub eyev: Tuple,
     pub normalv: Tuple,
     pub inside: bool,
+    pub over_point: Tuple,
 }
 
 pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputations<'a> {
@@ -84,6 +95,9 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         inside = true
     }
 
+    let directed_normal = if inside { -normalv } else { normalv };
+    let over_point = point + directed_normal * EPSILON;
+
     PreparedComputations {
         object: &i.object,
         t: i.t,
@@ -91,5 +105,6 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         eyev,
         normalv,
         inside,
+        over_point,
     }
 }

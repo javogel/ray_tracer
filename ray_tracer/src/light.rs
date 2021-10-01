@@ -1,7 +1,9 @@
 use crate::{
     color::{black, Color},
     material::Material,
+    ray::ray,
     tuple::*,
+    world::World,
 };
 
 pub struct PointLight {
@@ -22,10 +24,15 @@ pub fn lighting(
     p: Tuple,
     eyev: Tuple,
     normalv: Tuple,
+    in_shadow: bool,
 ) -> Color {
     let effective_color = material.color * light.intensity;
-    let lightv = (light.position - p).normalize();
     let ambient = effective_color * material.ambient;
+    if in_shadow {
+        return ambient;
+    };
+
+    let lightv = (light.position - p).normalize();
     let diffuse: Color;
     let specular: Color;
 
@@ -48,4 +55,18 @@ pub fn lighting(
     }
 
     return ambient + diffuse + specular;
+}
+
+pub fn is_shadowed(world: &World, point: Tuple) -> bool {
+    let v = world.light.position - point;
+    let distance = v.magnitude();
+    let direction = v.normalize();
+
+    let r = ray(point, direction);
+    let intersections = world.intersect(&r);
+
+    return match intersections.hit() {
+        Some(hit) if hit.t < distance => true,
+        _ => false,
+    };
 }

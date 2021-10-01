@@ -7,7 +7,7 @@ pub struct Dimensions {
 
 pub struct Canvas {
     pub dimensions: Dimensions,
-    pub pixels: Vec<u8>,
+    pub pixels: Vec<f32>,
 }
 
 pub enum ImageType {
@@ -17,7 +17,7 @@ pub enum ImageType {
 
 pub fn canvas(width: usize, height: usize) -> Canvas {
     Canvas {
-        pixels: vec![0; width * height * 3],
+        pixels: vec![0.; width * height * 3],
         dimensions: Dimensions { width, height },
     }
 }
@@ -29,9 +29,10 @@ impl Canvas {
         if self.within_bounds(x, y) {
             let Color { r, g, b } = color;
             let i = (width * y + x) * 3;
-            self.pixels[i] = self.rgb_to_u8(r);
-            self.pixels[i + 1] = self.rgb_to_u8(g);
-            self.pixels[i + 2] = self.rgb_to_u8(b);
+
+            self.pixels[i] = r;
+            self.pixels[i + 1] = g;
+            self.pixels[i + 2] = b;
         } else {
             println!("write_pixel received out of bounds inputs ({},{})", x, y);
         }
@@ -46,17 +47,13 @@ impl Canvas {
             true => {
                 let i = (width * y + x) * 3;
                 return Color {
-                    r: pixels[i] as f32 / 255.,
-                    g: pixels[i + 1] as f32 / 255.,
-                    b: pixels[i + 2] as f32 / 255.,
+                    r: pixels[i],
+                    g: pixels[i + 1],
+                    b: pixels[i + 2],
                 };
             }
             false => panic!("Received out of bounds inputs ({},{})", x, y),
         }
-    }
-
-    fn rgb_to_u8(&self, c: f32) -> u8 {
-        (255. * c).round().clamp(0., 255.) as u8
     }
 
     #[allow(unused_comparisons)]
@@ -122,8 +119,8 @@ pub mod render {
         return result;
     }
 
-    fn stringify(values: &Vec<u8>) -> Vec<String> {
-        values.iter().map(|n| n.to_string()).collect()
+    fn stringify(values: &Vec<f32>) -> Vec<String> {
+        values.iter().map(|n| rgb_to_u8(n).to_string()).collect()
     }
 
     fn ppm_header(canvas: &Canvas) -> String {
@@ -148,5 +145,9 @@ pub mod render {
         let mut file = File::create(path)?;
         writeln!(file, "{}", data)?;
         Ok(())
+    }
+
+    fn rgb_to_u8(c: &f32) -> u8 {
+        (255. * c).round().clamp(0., 255.) as u8
     }
 }

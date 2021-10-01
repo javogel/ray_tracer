@@ -1,5 +1,6 @@
 mod circle;
 mod projectile;
+mod scene;
 use std::time::Instant;
 
 fn main() {
@@ -11,7 +12,10 @@ fn main() {
     // circle::draw_chapter_4_exercise();
 
     // Chapter 5 Exercise
-    circle::draw_chapter_5_exercise();
+    // circle::draw_chapter_5_exercise();
+
+    // Chapter 7 Exercise
+    scene::draw_chapter_7_exercise();
     let duration = start.elapsed();
     println!("Rendering duration: {:?}", duration);
 }

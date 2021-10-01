@@ -9,7 +9,7 @@ fn test_canvas() {
 
     assert_eq!(c.width(), width);
     assert_eq!(c.height(), height);
-    assert_eq!(c.pixels, vec![0; width * height * 3]);
+    assert_eq!(c.pixels, vec![0.; width * height * 3]);
 }
 
 #[test]

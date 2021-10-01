@@ -35,10 +35,9 @@ impl Sphere {
         let transform_inverse = self.transform.inverse().unwrap();
         let object_point = transform_inverse.clone() * p;
         let object_normal = object_point - point(0.0, 0.0, 0.0);
-        let world_normal = transform_inverse.transpose() * object_normal;
-        let mut normal = world_normal.normalize();
-        normal.w = TupleType::Vector; // see pg. 82
-        normal
+        let mut world_normal = transform_inverse.transpose() * object_normal;
+        world_normal.w = TupleType::Vector; // see pg. 82
+        return world_normal.normalize();
     }
 }
 

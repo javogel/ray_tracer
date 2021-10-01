@@ -76,7 +76,7 @@ pub fn draw_chapter_5_exercise() {
                     let point = r.position(xs.locations[0].t);
                     let normal = shape.normal_at(point);
                     let eye = -r.direction;
-                    let color = lighting(shape.material(), &light, point, eye, normal);
+                    let color = lighting(shape.material(), &light, point, eye, normal, false);
                     c.write_pixel(x, y, color).unwrap()
                 }
                 None => (),

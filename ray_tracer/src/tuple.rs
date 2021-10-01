@@ -86,7 +86,7 @@ impl Tuple {
         }
     }
 
-    fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f32 {
         match self {
             Tuple {
                 x,

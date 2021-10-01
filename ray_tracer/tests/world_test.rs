@@ -4,8 +4,9 @@ use ray_tracer::{
     material::Material,
     ray::*,
     shapes::object::*,
-    transforms::scaling,
+    transforms::{scaling, translation},
     tuple::{point, vector},
+    utils::EPSILON,
     world::{default_world, *},
 };
 
@@ -93,7 +94,7 @@ fn shading_an_intersection() {
     let r = ray(point(0., 0., -5.), vector(0., 0., 1.));
 
     let i = intersection(4., &w.objects[0]);
-
+    println!("{:?}", i);
     let comps = prepare_computations(&i, &r);
     let hit_color = w.shade_hit(&comps);
 
@@ -154,4 +155,39 @@ fn color_at_when_intersection_behind_ray() {
     let hit_color = w.color_at(&r);
 
     assert_eq!(hit_color, w.objects[1].material().color);
+}
+
+#[test]
+
+fn when_shade_hit_is_given_intersection_in_shadow() {
+    let mut w = default_world();
+    w.light = point_light(point(0., 0., -10.), color(1., 1., 1.));
+
+    let s1 = Object::new_sphere();
+    let mut s2 = Object::new_sphere();
+    s2.set_transform(translation(0., 0., 10.));
+
+    w.objects = vec![s1, s2];
+    let r = ray(point(0., 0., 5.), vector(0., 0., 1.));
+
+    let i = intersection(4., &w.objects[1]);
+
+    let comps = prepare_computations(&i, &r);
+
+    let c = w.shade_hit(&comps);
+
+    assert_eq!(c, color(0.1, 0.1, 0.1))
+}
+
+#[test]
+fn hit_should_offset_the_point() {
+    let r = ray(point(0., 0., -5.), vector(0., 0., 1.));
+    let mut shape = Object::new_sphere();
+    shape.set_transform(translation(0., 0., 1.));
+
+    let i = intersection(5., &shape);
+    let comps = prepare_computations(&i, &r);
+
+    assert_eq!(comps.over_point.z < -EPSILON / 2., true);
+    assert_eq!(comps.point.z > comps.over_point.z, true);
 }

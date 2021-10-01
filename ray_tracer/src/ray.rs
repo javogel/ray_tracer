@@ -9,6 +9,7 @@ use crate::{
 use std::{ops::Index, vec};
 // use uuid::Uuid;
 
+#[derive(Debug)]
 pub struct Ray {
     pub origin: Tuple,
     pub direction: Tuple,
