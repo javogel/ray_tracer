@@ -28,6 +28,7 @@ pub fn lighting(
 ) -> Color {
     let effective_color = material.color * light.intensity;
     let ambient = effective_color * material.ambient;
+
     if in_shadow {
         return ambient;
     };

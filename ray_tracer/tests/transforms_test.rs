@@ -1,6 +1,6 @@
 use ray_tracer::transforms::*;
 use ray_tracer::tuple::*;
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 #[test]
 fn point_translation() {
@@ -56,7 +56,7 @@ fn rotation_x_axis() {
 
     let p = point(0., 1., 0.);
 
-    let square_root_of_2 = (2. as f32).sqrt();
+    let square_root_of_2 = (2. as f64).sqrt();
     assert_eq!(
         half_quarter.clone() * p,
         point(0., square_root_of_2 / 2., square_root_of_2 / 2.)
@@ -74,7 +74,7 @@ fn rotation_x_axis() {
 fn rotation_inverse() {
     let half_quarter = rotation_x(PI / 4.);
     let p = point(0., 1., 0.);
-    let square_root_of_2 = (2. as f32).sqrt();
+    let square_root_of_2 = (2. as f64).sqrt();
 
     assert_eq!(
         half_quarter.inverse().unwrap() * p,
@@ -89,7 +89,7 @@ fn rotation_y_axis() {
 
     let p = point(0., 0., 1.);
 
-    let square_root_of_2 = (2. as f32).sqrt();
+    let square_root_of_2 = (2. as f64).sqrt();
     assert_eq!(
         half_quarter.clone() * p,
         point(square_root_of_2 / 2., 0., square_root_of_2 / 2.)
@@ -105,7 +105,7 @@ fn rotation_z_axis() {
 
     let p = point(0., 1., 0.);
 
-    let square_root_of_2 = (2. as f32).sqrt();
+    let square_root_of_2 = (2. as f64).sqrt();
     assert_eq!(
         half_quarter.clone() * p,
         point(-square_root_of_2 / 2., square_root_of_2 / 2., 0.)

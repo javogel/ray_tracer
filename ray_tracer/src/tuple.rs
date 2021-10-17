@@ -86,7 +86,7 @@ impl Tuple {
         }
     }
 
-    pub fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f64 {
         match self {
             Tuple {
                 x,
@@ -108,7 +108,7 @@ impl Tuple {
         }
     }
 
-    pub fn dot(&self, b: Tuple) -> f32 {
+    pub fn dot(&self, b: Tuple) -> f64 {
         match (&self.w, b.w) {
             (TT::Vector, TT::Vector) => self.x * b.x + self.y * b.y + self.z * b.z,
             _ => panic!("Dot product can only be calculated on two Vectors"),
@@ -142,7 +142,7 @@ impl Tuple {
         vec![self.x, self.y, self.z, tuple_type]
     }
 
-    pub fn from_matrix(m: Matrix<f32>) -> Tuple {
+    pub fn from_matrix(m: Matrix<f64>) -> Tuple {
         let dim = m.dimensions();
         assert!(dim.0 == 4 && dim.1 == 1);
         let w = match m[3][0] >= 1.0 {
@@ -233,38 +233,38 @@ impl fmt::Display for TupleType {
 }
 
 impl Transformations for Tuple {
-    fn rotate_x(self, r: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn rotate_x(self, r: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = rotation_x(r).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
 
-    fn rotate_y(self, r: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn rotate_y(self, r: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = rotation_y(r).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
 
-    fn rotate_z(self, r: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn rotate_z(self, r: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = rotation_z(r).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
 
-    fn scale(self, x: f32, y: f32, z: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn scale(self, x: f64, y: f64, z: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = scaling(x, y, z).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
 
-    fn translate(self, x: f32, y: f32, z: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn translate(self, x: f64, y: f64, z: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = translation(x, y, z).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
 
-    fn shear(self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(self);
+    fn shear(self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Tuple {
+        let m = Matrix::<f64>::from_tuple(self);
         let result = shearing(xy, xz, yx, yz, zx, zy).multiply_matrix(m);
         Tuple::from_matrix(result)
     }
@@ -320,7 +320,7 @@ pub fn divide(a: Tuple, s: Scalar) -> Tuple {
     a / s
 }
 
-pub fn magnitude(a: Tuple) -> f32 {
+pub fn magnitude(a: Tuple) -> f64 {
     a.magnitude()
 }
 
@@ -328,7 +328,7 @@ pub fn normalize(a: Tuple) -> Tuple {
     a.normalize()
 }
 
-pub fn dot(a: Tuple, b: Tuple) -> f32 {
+pub fn dot(a: Tuple, b: Tuple) -> f64 {
     a.dot(b)
 }
 

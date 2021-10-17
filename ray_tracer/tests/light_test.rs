@@ -30,7 +30,7 @@ fn lighting_with_eye_between_light_and_surface() {
 
 #[test]
 fn lighting_with_eye_between_light_and_surface_and_eye_offset_45() {
-    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let sqrt_of_2_over_2 = (2.0 as f64).sqrt() / 2.0;
     let m = material();
     let position = point(0., 0., 0.);
     let eyev = vector(0., sqrt_of_2_over_2, sqrt_of_2_over_2);
@@ -55,7 +55,7 @@ fn lighting_with_eye_opposite_surface_and_light_offset_45() {
 
 #[test]
 fn lighting_with_eye_in_path_of_reflection_vector() {
-    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let sqrt_of_2_over_2 = (2.0 as f64).sqrt() / 2.0;
     let m = material();
     let position = point(0., 0., 0.);
     let eyev = vector(0., -sqrt_of_2_over_2, -sqrt_of_2_over_2);

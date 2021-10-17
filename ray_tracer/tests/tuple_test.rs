@@ -101,10 +101,10 @@ fn magnitude_of_tuples() {
     assert_eq!(m, 1.0);
 
     m = magnitude(vector(1., 2., 3.));
-    assert_eq!(m, 14.0_f32.sqrt());
+    assert_eq!(m, 14.0_f64.sqrt());
 
     m = magnitude(vector(-1., -2., -3.));
-    assert_eq!(m, 14.0_f32.sqrt());
+    assert_eq!(m, 14.0_f64.sqrt());
 }
 
 #[test]
@@ -112,7 +112,7 @@ fn normalize_tuples() {
     let mut n = normalize(vector(4., 0., 0.));
     assert_eq!(n, vector(1., 0., 0.));
 
-    let scalar = 1.0 / 14.0_f32.sqrt();
+    let scalar = 1.0 / 14.0_f64.sqrt();
     n = normalize(vector(1., 2., 3.));
     assert_eq!(n, vector(scalar, 2.0 * scalar, 3.0 * scalar,));
     assert!(equal(magnitude(n), 1.0));
@@ -144,7 +144,7 @@ fn reflect_a_vector_approaching_at_45_degrees() {
 
 #[test]
 fn reflect_a_vector_off_slanted_surface() {
-    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let sqrt_of_2_over_2 = (2.0 as f64).sqrt() / 2.0;
     let v = vector(0., -1., 0.);
     let b = vector(sqrt_of_2_over_2, sqrt_of_2_over_2, 0.);
     let reflection = v.reflect(b);

@@ -1,5 +1,5 @@
-use rand::prelude::*;
-use std::f32::consts::PI;
+// use rand::prelude::*;
+use std::f64::consts::PI;
 
 use ray_tracer::{
     camera::{camera, render, view_transform},
@@ -13,8 +13,6 @@ use ray_tracer::{
 };
 
 pub fn draw_chapter_7_exercise() {
-    let mut rng = thread_rng();
-
     let mut floor = default_sphere();
     floor.transform = scaling(10., 0.01, 10.);
     floor.material.color = color(1., 0.9, 0.9);
@@ -35,35 +33,23 @@ pub fn draw_chapter_7_exercise() {
     right_wall.material = floor.material.clone();
 
     let mut middle = default_sphere();
-    middle.transform = translation(-1. * rng.gen::<f32>(), 1. * rng.gen::<f32>(), 0.5);
+    middle.transform = translation(-0.5, 1., 0.5);
     middle.material = material();
-    middle.material.color = color(
-        1. * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-    );
+    middle.material.color = color(0.1, 1., 0.5);
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
 
     let mut right = default_sphere();
-    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5 * rng.gen::<f32>(), 0.5);
+    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
     right.material = material();
-    right.material.color = color(
-        0.5 * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-    );
+    right.material.color = color(0.5, 1., 0.1);
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
 
     let mut left = default_sphere();
     left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
     left.material = material();
-    left.material.color = color(
-        1.0 * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-        1. * rng.gen::<f32>(),
-    );
+    left.material.color = color(1.0, 0.8, 0.1);
     left.material.diffuse = 0.7;
     left.material.specular = 0.3;
 
@@ -78,7 +64,7 @@ pub fn draw_chapter_7_exercise() {
             Object::Sphere(right),
         ],
     );
-    let mut camera = camera(600, 300, PI / 3.);
+    let mut camera = camera(1000, 500, PI / 3.);
 
     camera.transform = view_transform(point(0., 1.5, -5.), point(0., 1., 0.), vector(0., 1., 0.));
 

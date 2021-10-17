@@ -18,11 +18,11 @@ where
         + Neg<Output = T>
         + Copy
         + Clone
-        + Into<f32>
+        + Into<f64>
         + Display
         + fmt::Debug,
 {
-    pub fn new(x: usize, y: usize) -> Matrix<f32> {
+    pub fn new(x: usize, y: usize) -> Matrix<f64> {
         Matrix {
             data: vec![vec![0.0; x]; y],
         }
@@ -31,7 +31,7 @@ where
         return Self { data: input };
     }
 
-    pub fn from_tuple(t: Tuple) -> Matrix<f32> {
+    pub fn from_tuple(t: Tuple) -> Matrix<f64> {
         let mut data = vec![];
         for i in t.raw() {
             data.push(vec![i])
@@ -44,17 +44,17 @@ where
         (data.len(), data[0].len())
     }
 
-    pub fn multiply_matrix(&self, other: Matrix<T>) -> Matrix<f32>
+    pub fn multiply_matrix(&self, other: Matrix<T>) -> Matrix<f64>
     where
-        T: Mul<T, Output = f32> + Add<f32>,
+        T: Mul<T, Output = f64> + Add<f64>,
     {
         let (ay, ax) = self.dimensions();
         let (by, bx) = other.dimensions();
         assert!(ax == by);
-        let mut m = Matrix::<f32>::new(bx, ay);
+        let mut m = Matrix::<f64>::new(bx, ay);
         for row in 0..ay {
             for col in 0..bx {
-                let mut total: f32 = 0.;
+                let mut total: f64 = 0.;
                 for i in 0..by {
                     total = self[row][i] * other[i][col] + total;
                 }
@@ -64,7 +64,7 @@ where
         return m;
     }
 
-    pub fn transpose(&self) -> Matrix<f32> {
+    pub fn transpose(&self) -> Matrix<f64> {
         let (rows, cols) = self.dimensions();
         let mut m = Self::new(cols, rows);
         for row in 0..rows {
@@ -138,12 +138,12 @@ where
         return if is_odd(column + row) { -minor } else { minor };
     }
 
-    pub fn inverse(&self) -> Option<Matrix<f32>>
+    pub fn inverse(&self) -> Option<Matrix<f64>>
     where
         T: Mul<T, Output = T>,
-        f32: From<T>,
+        f64: From<T>,
     {
-        let determinant = f32::from(self.determinant());
+        let determinant = f64::from(self.determinant());
         let (cols, rows) = self.dimensions();
 
         return match determinant == 0. {
@@ -152,7 +152,7 @@ where
                 let mut m = matrix(cols, rows);
                 for row in 0..rows {
                     for col in 0..cols {
-                        m.data[col][row] = f32::from(self.cofactor(row, col)) / determinant
+                        m.data[col][row] = f64::from(self.cofactor(row, col)) / determinant
                     }
                 }
                 Some(m)
@@ -163,35 +163,35 @@ where
 
 impl Matrix<Scalar> {
     pub fn multiply_tuple(&self, other: Tuple) -> Tuple {
-        let m = Matrix::<f32>::from_tuple(other);
+        let m = Matrix::<f64>::from_tuple(other);
         let result = self.multiply_matrix(m);
 
         Tuple::from_matrix(result)
     }
 }
 
-impl Transformations for Matrix<f32> {
-    fn rotate_x(self, r: f32) -> Matrix<f32> {
+impl Transformations for Matrix<f64> {
+    fn rotate_x(self, r: f64) -> Matrix<f64> {
         rotation_x(r).multiply_matrix(self)
     }
 
-    fn rotate_y(self, r: f32) -> Matrix<f32> {
+    fn rotate_y(self, r: f64) -> Matrix<f64> {
         rotation_y(r).multiply_matrix(self)
     }
 
-    fn rotate_z(self, r: f32) -> Matrix<f32> {
+    fn rotate_z(self, r: f64) -> Matrix<f64> {
         rotation_z(r).multiply_matrix(self)
     }
 
-    fn scale(self, x: f32, y: f32, z: f32) -> Matrix<f32> {
+    fn scale(self, x: f64, y: f64, z: f64) -> Matrix<f64> {
         scaling(x, y, z).multiply_matrix(self)
     }
 
-    fn translate(self, x: f32, y: f32, z: f32) -> Matrix<f32> {
+    fn translate(self, x: f64, y: f64, z: f64) -> Matrix<f64> {
         translation(x, y, z).multiply_matrix(self)
     }
 
-    fn shear(self, xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Matrix<f32> {
+    fn shear(self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix<f64> {
         shearing(xy, xz, yx, yz, zx, zy).multiply_matrix(self)
     }
 }
@@ -206,13 +206,13 @@ impl<T> Index<usize> for Matrix<T> {
 
 impl<T> PartialEq for Matrix<T>
 where
-    T: PartialOrd<f32>
+    T: PartialOrd<f64>
         + Sub<T, Output = T>
         + Add<T, Output = T>
         + Neg<Output = T>
         + Copy
         + Clone
-        + Into<f32>
+        + Into<f64>
         + Display
         + fmt::Debug,
 {
@@ -231,25 +231,25 @@ where
 
 impl<T> Mul<Matrix<T>> for Matrix<T>
 where
-    T: Mul<T, Output = f32>
-        + Add<f32>
+    T: Mul<T, Output = f64>
+        + Add<f64>
         + Sub<T, Output = T>
         + Add<T, Output = T>
         + Neg<Output = T>
         + Copy
         + Clone
-        + Into<f32>
+        + Into<f64>
         + Display
         + fmt::Debug,
 {
-    type Output = Matrix<f32>;
+    type Output = Matrix<f64>;
 
-    fn mul(self, rhs: Matrix<T>) -> Matrix<f32> {
+    fn mul(self, rhs: Matrix<T>) -> Matrix<f64> {
         self.multiply_matrix(rhs)
     }
 }
 
-impl Mul<Tuple> for Matrix<f32> {
+impl Mul<Tuple> for Matrix<f64> {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Tuple {
@@ -257,7 +257,7 @@ impl Mul<Tuple> for Matrix<f32> {
     }
 }
 
-impl Mul<Tuple> for &Matrix<f32> {
+impl Mul<Tuple> for &Matrix<f64> {
     type Output = Tuple;
 
     fn mul(self, rhs: Tuple) -> Tuple {
@@ -278,11 +278,11 @@ where
     }
 }
 
-pub fn matrix(cols: usize, rows: usize) -> Matrix<f32> {
-    Matrix::<f32>::new(cols, rows)
+pub fn matrix(cols: usize, rows: usize) -> Matrix<f64> {
+    Matrix::<f64>::new(cols, rows)
 }
 
-pub fn identity() -> Matrix<f32> {
+pub fn identity() -> Matrix<f64> {
     Matrix::from(vec![
         vec![1., 0., 0., 0.],
         vec![0., 1., 0., 0.],

@@ -30,6 +30,7 @@ impl World {
 
     pub fn shade_hit<'a>(&self, c: &'a PreparedComputations) -> Color {
         let shadowed = is_shadowed(self, c.over_point);
+
         return lighting(
             c.object.material(),
             &self.light,
@@ -76,7 +77,7 @@ pub fn default_world() -> World {
 
 pub struct PreparedComputations<'a> {
     pub object: &'a Object,
-    pub t: f32,
+    pub t: f64,
     pub point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
@@ -94,9 +95,7 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         normalv = -normalv;
         inside = true
     }
-
-    let directed_normal = if inside { -normalv } else { normalv };
-    let over_point = point + directed_normal * EPSILON;
+    let over_point = point + normalv * EPSILON;
 
     PreparedComputations {
         object: &i.object,

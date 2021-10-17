@@ -188,6 +188,6 @@ fn hit_should_offset_the_point() {
     let i = intersection(5., &shape);
     let comps = prepare_computations(&i, &r);
 
-    assert_eq!(comps.over_point.z < -EPSILON / 2., true);
+    assert_eq!(comps.over_point.z < (-EPSILON / 2.), true);
     assert_eq!(comps.point.z > comps.over_point.z, true);
 }

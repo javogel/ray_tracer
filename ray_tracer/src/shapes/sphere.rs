@@ -11,12 +11,12 @@ pub struct Sphere {
     pub uuid: Uuid,
     pub center: Tuple,
     pub material: Material,
-    radius: f32,
-    pub transform: Matrix<f32>,
+    radius: f64,
+    pub transform: Matrix<f64>,
 }
 
 impl Sphere {
-    pub fn new(center: Tuple, radius: f32) -> Self {
+    pub fn new(center: Tuple, radius: f64) -> Self {
         let uuid = Uuid::new_v4();
         let transform = identity();
         Sphere {
@@ -27,7 +27,7 @@ impl Sphere {
             transform,
         }
     }
-    pub fn set_transform(&mut self, transform: Matrix<f32>) {
+    pub fn set_transform(&mut self, transform: Matrix<f64>) {
         self.transform = transform;
     }
 
@@ -41,7 +41,7 @@ impl Sphere {
     }
 }
 
-pub fn sphere(center: Tuple, radius: f32) -> Sphere {
+pub fn sphere(center: Tuple, radius: f64) -> Sphere {
     Sphere::new(center, radius)
 }
 

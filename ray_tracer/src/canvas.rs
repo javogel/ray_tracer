@@ -7,7 +7,7 @@ pub struct Dimensions {
 
 pub struct Canvas {
     pub dimensions: Dimensions,
-    pub pixels: Vec<f32>,
+    pub pixels: Vec<f64>,
 }
 
 pub enum ImageType {
@@ -119,7 +119,7 @@ pub mod render {
         return result;
     }
 
-    fn stringify(values: &Vec<f32>) -> Vec<String> {
+    fn stringify(values: &Vec<f64>) -> Vec<String> {
         values.iter().map(|n| rgb_to_u8(n).to_string()).collect()
     }
 
@@ -147,7 +147,7 @@ pub mod render {
         Ok(())
     }
 
-    fn rgb_to_u8(c: &f32) -> u8 {
+    fn rgb_to_u8(c: &f64) -> u8 {
         (255. * c).round().clamp(0., 255.) as u8
     }
 }

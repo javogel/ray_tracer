@@ -1,4 +1,4 @@
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 use ray_tracer::{
     camera::{camera, render, view_transform},
@@ -96,7 +96,7 @@ fn constructing_ray_through_corner_of_canvas() {
 fn constructing_ray_when_camera_is_transformed() {
     let mut c = camera(201, 101, PI / 2.);
     c.transform = rotation_y(PI / 4.) * translation(0., -2., 5.);
-    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let sqrt_of_2_over_2 = (2.0 as f64).sqrt() / 2.0;
     let r = c.ray_for_pixel(100, 50);
     assert_eq!(r.origin, point(0., 2., -5.));
 

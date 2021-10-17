@@ -1,4 +1,4 @@
-pub type Scalar = f32;
+pub type Scalar = f64;
 pub const EPSILON: Scalar = 0.00001;
 
 pub fn is_odd(n: usize) -> bool {

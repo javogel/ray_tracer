@@ -5,7 +5,7 @@ use ray_tracer::{
     transforms::{rotation_z, scaling, translation},
     tuple::*,
 };
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 #[test]
 fn normal_on_sphere_at_point_on_x_axis() {
@@ -33,7 +33,7 @@ fn normal_on_sphere_at_point_on_z_axis() {
 
 #[test]
 fn normal_on_sphere_at_point_on_nonaxial_point() {
-    let sqrt_of_3_over_3 = (3.0 as f32).sqrt() / 3.0;
+    let sqrt_of_3_over_3 = (3.0 as f64).sqrt() / 3.0;
     let s = sphere(point(0., 0., 0.), 1.);
     let normal = s.normal_at(point(sqrt_of_3_over_3, sqrt_of_3_over_3, sqrt_of_3_over_3));
 
@@ -45,7 +45,7 @@ fn normal_on_sphere_at_point_on_nonaxial_point() {
 
 #[test]
 fn normal_on_sphere_is_normalized() {
-    let sqrt_of_3_over_3 = (3.0 as f32).sqrt() / 3.0;
+    let sqrt_of_3_over_3 = (3.0 as f64).sqrt() / 3.0;
     let s = sphere(point(0., 0., 0.), 1.);
     let normal = s.normal_at(point(sqrt_of_3_over_3, sqrt_of_3_over_3, sqrt_of_3_over_3));
 
@@ -66,7 +66,7 @@ fn computing_normal_on_translated_sphere() {
 
 #[test]
 fn computing_normal_on_transformed_sphere() {
-    let sqrt_of_2_over_2 = (2.0 as f32).sqrt() / 2.0;
+    let sqrt_of_2_over_2 = (2.0 as f64).sqrt() / 2.0;
     let mut s = sphere(point(0., 0., 0.), 1.);
     s.set_transform(scaling(1., 0.5, 1.) * rotation_z(PI / 5.0));
 

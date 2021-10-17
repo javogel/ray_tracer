@@ -33,13 +33,13 @@ impl Object {
         };
     }
 
-    pub fn transform(&self) -> &Matrix<f32> {
+    pub fn transform(&self) -> &Matrix<f64> {
         return match self {
             Self::Sphere(a) => &a.transform,
         };
     }
 
-    pub fn set_transform(&mut self, transform: Matrix<f32>) {
+    pub fn set_transform(&mut self, transform: Matrix<f64>) {
         return match self {
             Self::Sphere(s) => s.transform = transform,
         };

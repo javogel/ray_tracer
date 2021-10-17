@@ -6,7 +6,7 @@ use ray_tracer::ray::{intersect, ray};
 use ray_tracer::shapes::object::Object;
 use ray_tracer::tuple::*;
 use ray_tracer::{material::*, transforms::*};
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 pub fn draw_chapter_4_exercise() {
     let mut c = canvas(1000, 1000);
@@ -14,11 +14,11 @@ pub fn draw_chapter_4_exercise() {
 
     for i in 0..12 {
         let p = point(0., 0.2, 0.)
-            .rotate_z((i as f32) * PI / 6.)
+            .rotate_z((i as f64) * PI / 6.)
             .translate(0.5, 0.5, 0.);
 
-        let x = (width as f32 * p.x) as usize;
-        let y = (height as f32 * p.y) as usize;
+        let x = (width as f64 * p.x) as usize;
+        let y = (height as f64 * p.y) as usize;
         c.write_pixel(x, y, color(0.9, 0.9, 0.9)).unwrap();
     }
 
@@ -51,7 +51,7 @@ pub fn draw_chapter_5_exercise() {
     let wall_size = 7.;
 
     let canvas_pixels = 500;
-    let pixel_size = wall_size / (canvas_pixels as f32);
+    let pixel_size = wall_size / (canvas_pixels as f64);
 
     let half = wall_size / 2.;
 
@@ -61,10 +61,10 @@ pub fn draw_chapter_5_exercise() {
 
     let light = create_light();
     for y in 0..canvas_pixels {
-        let world_y = half - pixel_size * (y as f32);
+        let world_y = half - pixel_size * (y as f64);
 
         for x in 0..canvas_pixels {
-            let world_x = half - pixel_size * (x as f32);
+            let world_x = half - pixel_size * (x as f64);
             let position = point(world_x, world_y, wall_z);
 
             let r = ray(ray_origin, normalize(position - ray_origin));

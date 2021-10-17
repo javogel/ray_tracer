@@ -3,10 +3,10 @@ use crate::color::*;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Material {
     pub color: Color,
-    pub ambient: f32,
-    pub diffuse: f32,
-    pub specular: f32,
-    pub shininess: f32,
+    pub ambient: f64,
+    pub diffuse: f64,
+    pub specular: f64,
+    pub shininess: f64,
 }
 
 fn default_material() -> Material {

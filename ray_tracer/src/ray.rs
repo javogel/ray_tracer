@@ -17,7 +17,7 @@ pub struct Ray {
 
 #[derive(Debug, Clone)]
 pub struct Intersection<'a> {
-    pub t: f32,
+    pub t: f64,
     pub object: &'a Object,
 }
 
@@ -30,11 +30,11 @@ impl Ray {
         Self { origin, direction }
     }
 
-    pub fn position(&self, t: f32) -> Tuple {
+    pub fn position(&self, t: f64) -> Tuple {
         self.origin + self.direction * t
     }
 
-    fn calc_sphere(&self, s: &Sphere) -> (f32, f32, f32) {
+    fn calc_sphere(&self, s: &Sphere) -> (f64, f64, f64) {
         let r = self.transform(&s.transform.inverse().unwrap());
         let sphere_to_ray = r.origin - s.center;
         let a = dot(r.direction, r.direction);
@@ -70,7 +70,7 @@ impl Ray {
         Intersect { locations }
     }
 
-    pub fn transform(&self, transformation: &Matrix<f32>) -> Self {
+    pub fn transform(&self, transformation: &Matrix<f64>) -> Self {
         Self {
             direction: transformation * self.direction,
             origin: transformation * self.origin,
@@ -122,7 +122,7 @@ pub fn intersect<'a>(r: &'a Ray, s: &'a Object) -> Intersect<'a> {
     r.intersect(s)
 }
 
-pub fn intersection<'a>(t: f32, object: &'a Object) -> Intersection<'a> {
+pub fn intersection<'a>(t: f64, object: &'a Object) -> Intersection<'a> {
     Intersection { t, object }
 }
 
