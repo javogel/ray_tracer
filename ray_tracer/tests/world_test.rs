@@ -22,7 +22,7 @@ fn world_can_have_light_and_no_objects() {
 
     assert_eq!(w.light.position, origin);
     assert_eq!(w.light.intensity, light_color);
-    assert_eq!(w.objects[0], obj);
+    assert!(w.objects[0] == obj);
 }
 
 #[test]
@@ -32,11 +32,11 @@ fn default_world_has_lighting_and_2_spheres() {
     assert_eq!(world.light.position, point(-10., 10., -10.));
     assert_eq!(world.light.intensity, color(1., 1., 1.));
 
-    assert_eq!(world.objects[0].material().color, color(0.8, 1., 0.6));
-    assert_eq!(world.objects[0].material().diffuse, 0.7);
-    assert_eq!(world.objects[0].material().specular, 0.2);
+    assert_eq!(world.objects[0].material.color, color(0.8, 1., 0.6));
+    assert_eq!(world.objects[0].material.diffuse, 0.7);
+    assert_eq!(world.objects[0].material.specular, 0.2);
 
-    assert_eq!(*world.objects[1].transform(), scaling(0.5, 0.5, 0.5));
+    assert_eq!(world.objects[1].transform, scaling(0.5, 0.5, 0.5));
 }
 
 #[test]
@@ -59,7 +59,7 @@ fn pre_computating_state_of_intersection() {
 
     let comps = prepare_computations(&i, &r);
     assert_eq!(comps.t, 4.);
-    assert_eq!(comps.object.uuid(), shape.uuid());
+    assert_eq!(comps.object.uuid, shape.uuid);
     assert_eq!(comps.point, point(0., 0., -1.));
     assert_eq!(comps.eyev, vector(0., 0., -1.));
     assert_eq!(comps.normalv, vector(0., 0., -1.));
@@ -94,7 +94,6 @@ fn shading_an_intersection() {
     let r = ray(point(0., 0., -5.), vector(0., 0., 1.));
 
     let i = intersection(4., &w.objects[0]);
-    println!("{:?}", i);
     let comps = prepare_computations(&i, &r);
     let hit_color = w.shade_hit(&comps);
 
@@ -141,20 +140,20 @@ fn color_at_when_intersection_behind_ray() {
 
     obj1.set_material(Material {
         ambient: 1.,
-        ..*obj1.material()
+        ..obj1.material
     });
 
     let obj2 = &mut w.objects[1];
     obj2.set_material(Material {
         ambient: 1.,
-        ..*obj2.material()
+        ..obj2.material
     });
 
     let r = ray(point(0., 0., 0.75), vector(0., 0., -1.));
 
     let hit_color = w.color_at(&r);
 
-    assert_eq!(hit_color, w.objects[1].material().color);
+    assert_eq!(hit_color, w.objects[1].material.color);
 }
 
 #[test]

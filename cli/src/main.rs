@@ -15,7 +15,10 @@ fn main() {
     // circle::draw_chapter_5_exercise();
 
     // Chapter 7 Exercise
-    scene::draw_chapter_7_exercise();
+    // scene::draw_chapter_7_exercise();
+
+    // Chapter 9 Exercise
+    scene::draw_chapter_9_exercise();
     let duration = start.elapsed();
     println!("Rendering duration: {:?}", duration);
 }

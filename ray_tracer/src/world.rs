@@ -32,7 +32,7 @@ impl World {
         let shadowed = is_shadowed(self, c.over_point);
 
         return lighting(
-            c.object.material(),
+            &c.object.material,
             &self.light,
             c.point,
             c.eyev,
@@ -67,7 +67,9 @@ pub fn default_world() -> World {
         color: color(0.8, 1.0, 0.6),
         diffuse: 0.7,
         specular: 0.2,
-        ..*sphere1.material()
+        ambient: sphere1.material.ambient,
+        shininess: sphere1.material.shininess,
+        // pattern: None,
     });
     let mut sphere2 = Object::new_sphere();
     sphere2.set_transform(scaling(0.5, 0.5, 0.5));

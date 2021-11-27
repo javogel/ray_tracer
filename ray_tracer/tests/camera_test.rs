@@ -6,6 +6,7 @@ use ray_tracer::{
     matrix::{identity, Matrix},
     transforms::{rotation_y, scaling, translation},
     tuple::{point, vector},
+    utils::EPSILON,
     world::default_world,
 };
 
@@ -67,13 +68,13 @@ fn camera_creation() {
 #[test]
 fn pixel_size_for_horizontal_canvas() {
     let c = camera(200, 125, PI / 2.);
-    assert_eq!(c.pixel_size, 0.01);
+    assert!(0.01 - c.pixel_size < EPSILON);
 }
 
 #[test]
 fn pixel_size_for_vertical_canvas() {
     let c = camera(125, 200, PI / 2.);
-    assert_eq!(c.pixel_size, 0.01);
+    assert!(0.01 - c.pixel_size < EPSILON);
 }
 
 #[test]

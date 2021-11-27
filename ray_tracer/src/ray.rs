@@ -1,13 +1,5 @@
-// #![allow(dead_code)]
-
-use crate::{
-    matrix::Matrix,
-    shapes::{object::*, sphere::*},
-    tuple::*,
-    utils::EPSILON,
-};
-use std::{ops::Index, vec};
-// use uuid::Uuid;
+use crate::{matrix::Matrix, shapes::object::*, tuple::*, utils::EPSILON};
+use std::{fmt, ops::Index};
 
 #[derive(Debug)]
 pub struct Ray {
@@ -15,7 +7,6 @@ pub struct Ray {
     pub direction: Tuple,
 }
 
-#[derive(Debug, Clone)]
 pub struct Intersection<'a> {
     pub t: f64,
     pub object: &'a Object,
@@ -34,40 +25,8 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    fn calc_sphere(&self, s: &Sphere) -> (f64, f64, f64) {
-        let r = self.transform(&s.transform.inverse().unwrap());
-        let sphere_to_ray = r.origin - s.center;
-        let a = dot(r.direction, r.direction);
-        let b = dot(r.direction, sphere_to_ray) * 2.;
-        let c = dot(sphere_to_ray, sphere_to_ray) - 1.;
-
-        (a, b, c)
-    }
-
-    pub fn intersect<'a>(&self, s: &'a Object) -> Intersect<'a> {
-        let (a, b, c) = match s {
-            Object::Sphere(s) => self.calc_sphere(s),
-        };
-
-        let discriminant = b * b - a * c * 4.;
-
-        let locations = if discriminant < 0. {
-            vec![]
-        } else {
-            let t1 = (-b - discriminant.sqrt()) / (a * 2.);
-            let t2 = (-b + discriminant.sqrt()) / (a * 2.);
-
-            let i1 = intersection(t1, s);
-            let i2 = intersection(t2, s);
-
-            if i1.t < i2.t {
-                vec![i1, i2]
-            } else {
-                vec![i2, i1]
-            }
-        };
-
-        Intersect { locations }
+    pub fn intersect<'a>(&self, object: &'a Object) -> Intersect<'a> {
+        object.intersect(self)
     }
 
     pub fn transform(&self, transformation: &Matrix<f64>) -> Self {
@@ -111,6 +70,21 @@ impl<'a> PartialEq for Intersection<'a> {
             return false;
         }
         self.object == other.object
+    }
+}
+
+impl<'a> Clone for Intersection<'a> {
+    fn clone(&self) -> Self {
+        Self {
+            t: self.t.clone(),
+            object: self.object,
+        }
+    }
+}
+
+impl<'a> fmt::Display for Intersection<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Intersection: {}; Uuid: {}", self.t, self.object.uuid)
     }
 }
 
