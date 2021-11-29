@@ -33,6 +33,7 @@ impl World {
 
         return lighting(
             &c.object.material,
+            &c.object,
             &self.light,
             c.point,
             c.eyev,
@@ -69,7 +70,7 @@ pub fn default_world() -> World {
         specular: 0.2,
         ambient: sphere1.material.ambient,
         shininess: sphere1.material.shininess,
-        // pattern: None,
+        pattern: None,
     });
     let mut sphere2 = Object::new_sphere();
     sphere2.set_transform(scaling(0.5, 0.5, 0.5));

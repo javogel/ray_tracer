@@ -2,6 +2,7 @@ use ray_tracer::{
     color::color,
     light::{is_shadowed, lighting, point_light},
     material::material,
+    shapes::object::Object,
     tuple::{point, vector},
     world::default_world,
 };
@@ -23,7 +24,15 @@ fn lighting_with_eye_between_light_and_surface() {
     let eyev = vector(0., 0., -1.);
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 0., -10.), color(1., 1., 1.));
-    let result = lighting(&m, &light, position, eyev, normalv, false);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        false,
+    );
 
     assert_eq!(result, color(1.9, 1.9, 1.9));
 }
@@ -36,7 +45,15 @@ fn lighting_with_eye_between_light_and_surface_and_eye_offset_45() {
     let eyev = vector(0., sqrt_of_2_over_2, sqrt_of_2_over_2);
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 0., -10.), color(1., 1., 1.));
-    let result = lighting(&m, &light, position, eyev, normalv, false);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        false,
+    );
 
     assert_eq!(result, color(1., 1., 1.));
 }
@@ -48,7 +65,15 @@ fn lighting_with_eye_opposite_surface_and_light_offset_45() {
     let eyev = vector(0., 0., -1.);
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 10., -10.), color(1., 1., 1.));
-    let result = lighting(&m, &light, position, eyev, normalv, false);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        false,
+    );
 
     assert_eq!(result, color(0.7364, 0.7364, 0.7364));
 }
@@ -61,7 +86,15 @@ fn lighting_with_eye_in_path_of_reflection_vector() {
     let eyev = vector(0., -sqrt_of_2_over_2, -sqrt_of_2_over_2);
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 10., -10.), color(1., 1., 1.));
-    let result = lighting(&m, &light, position, eyev, normalv, false);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        false,
+    );
 
     assert_eq!(result, color(1.6464, 1.6464, 1.6464));
 }
@@ -73,7 +106,15 @@ fn lighting_with_light_behind_surface() {
     let eyev = vector(0., 0., -1.);
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 0., 10.), color(1., 1., 1.));
-    let result = lighting(&m, &light, position, eyev, normalv, false);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        false,
+    );
 
     assert_eq!(result, color(0.1, 0.1, 0.1));
 }
@@ -86,7 +127,15 @@ fn lighting_with_surface_in_shadow() {
     let normalv = vector(0., 0., -1.);
     let light = point_light(point(0., 0., -10.), color(1., 1., 1.));
     let in_shadow = true;
-    let result = lighting(&m, &light, position, eyev, normalv, in_shadow);
+    let result = lighting(
+        &m,
+        &Object::new_sphere(),
+        &light,
+        position,
+        eyev,
+        normalv,
+        in_shadow,
+    );
 
     assert_eq!(result, color(0.1, 0.1, 0.1));
 }

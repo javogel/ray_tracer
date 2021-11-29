@@ -6,6 +6,7 @@ use crate::{
     tuple::{point, Tuple},
     world::World,
 };
+use rayon::prelude::*;
 
 pub struct Camera {
     pub hsize: i16,
@@ -101,5 +102,29 @@ pub fn render(camera: Camera, world: World) -> Canvas {
             }
         }
     }
+    return image;
+}
+
+pub fn render_parallelized(camera: Camera, world: World) -> Canvas {
+    let (width, height) = (camera.hsize as usize, camera.vsize as usize);
+    let mut pixels = vec![0.; width * height * 3];
+    let bands: Vec<(usize, &mut [f64])> = pixels.chunks_mut(width * 3).enumerate().collect();
+
+    bands.into_par_iter().for_each(|(i, band)| {
+        // for y in 0..1 {
+        for x in 0..width {
+            let ray = &camera.ray_for_pixel(x as i16, i as i16);
+            let color = world.color_at(&ray);
+
+            let index = (3 * x) as usize;
+            band[index] = color.r;
+            band[index + 1] = color.g;
+            band[index + 2] = color.b;
+        }
+        // }
+    });
+
+    let mut image = canvas(camera.hsize as usize, camera.vsize as usize);
+    image.pixels = pixels;
     return image;
 }
