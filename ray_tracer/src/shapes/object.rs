@@ -1,4 +1,4 @@
-use std::fmt::{self, Debug};
+use std::fmt::Debug;
 
 use super::{plane::*, sphere::*};
 use crate::{

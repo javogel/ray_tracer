@@ -140,12 +140,14 @@ fn color_at_when_intersection_behind_ray() {
 
     obj1.set_material(Material {
         ambient: 1.,
+        pattern: None,
         ..obj1.material
     });
 
     let obj2 = &mut w.objects[1];
     obj2.set_material(Material {
         ambient: 1.,
+        pattern: None,
         ..obj2.material
     });
 

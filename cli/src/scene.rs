@@ -1,11 +1,13 @@
+#![allow(dead_code)]
 // use rand::prelude::*;
 use std::f64::consts::PI;
 
 use ray_tracer::{
-    camera::{camera, render, view_transform},
+    camera::{camera, render, render_parallelized, view_transform},
     color::color,
     light::point_light,
     material::material,
+    pattern::stripe_pattern,
     shapes::object::Object,
     transforms::*,
     tuple::*,
@@ -93,6 +95,9 @@ pub fn draw_chapter_9_exercise() {
     middle.material.color = color(0.1, 1., 0.5);
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
+    let mut pattern = stripe_pattern(color(1., 1., 1.), color(0., 0., 0.));
+    pattern.transform = scaling(0.2, 0.2, 0.2) * rotation_x(PI);
+    middle.material.pattern = Some(Box::new(pattern));
 
     let mut right = Object::new_sphere();
     right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
@@ -112,11 +117,15 @@ pub fn draw_chapter_9_exercise() {
         point_light(point(-5., 5., -10.), color(1., 1., 1.)),
         vec![floor, left_wall, right_wall, ceiling, middle, left, right],
     );
-    let mut camera = camera(2000, 1000, PI / 3.);
+    let mut camera = camera(1200, 800, PI / 3.);
 
     camera.transform = view_transform(point(0., 1.5, -5.), point(0., 1., 0.), vector(0., 1., 0.));
 
-    let c = render(camera, w);
+    // let c = render(camera, w);
+    let c = render_parallelized(camera, w);
 
-    c.save(ray_tracer::canvas::ImageType::PPM, "chapter9");
+    c.save(
+        ray_tracer::canvas::ImageType::PPM,
+        "chapter9-striped-parallel-1200x800",
+    );
 }
