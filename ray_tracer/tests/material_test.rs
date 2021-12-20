@@ -9,4 +9,5 @@ fn creating_default_material() {
     assert_eq!(material.diffuse, 0.9);
     assert_eq!(material.specular, 0.9);
     assert_eq!(material.shininess, 200.);
+    assert_eq!(material.reflective, 0.);
 }

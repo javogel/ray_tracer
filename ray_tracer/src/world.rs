@@ -2,7 +2,7 @@ use crate::{
     color::{color, Color},
     light::{is_shadowed, lighting, point_light, PointLight},
     material::Material,
-    ray::{Intersect, Intersection, Ray},
+    ray::{ray, Intersect, Intersection, Ray},
     shapes::object::Object,
     transforms::scaling,
     tuple::{point, Tuple},
@@ -28,10 +28,10 @@ impl World {
         return Intersect { locations };
     }
 
-    pub fn shade_hit<'a>(&self, c: &'a PreparedComputations) -> Color {
+    pub fn shade_hit<'a>(&self, c: &'a PreparedComputations, remaining: u8) -> Color {
         let shadowed = is_shadowed(self, c.over_point);
 
-        return lighting(
+        let surface = lighting(
             &c.object.material,
             &c.object,
             &self.light,
@@ -40,18 +40,34 @@ impl World {
             c.normalv,
             shadowed,
         );
+
+        let reflected = self.reflected_color(c, remaining);
+
+        return surface + reflected;
     }
 
-    pub fn color_at(&self, r: &Ray) -> Color {
+    pub fn color_at(&self, r: &Ray, remaining_depth: u8) -> Color {
         let intersections = self.intersect(r);
 
         return match intersections.hit() {
             Some(i) => {
                 let comps = prepare_computations(&i, r);
-                self.shade_hit(&comps)
+                self.shade_hit(&comps, remaining_depth)
             }
             None => color(0., 0., 0.),
         };
+    }
+
+    pub fn reflected_color(&self, comps: &PreparedComputations, remaining: u8) -> Color {
+        if remaining <= 0 || comps.object.material.reflective == 0. {
+            return color(0., 0., 0.);
+        }
+
+        let reflected_ray = ray(comps.over_point, comps.reflectv);
+
+        let reflected_color = self.color_at(&reflected_ray, remaining - 1);
+
+        return reflected_color * comps.object.material.reflective;
     }
 }
 pub fn world(light: PointLight, objects: Vec<Object>) -> World {
@@ -71,6 +87,7 @@ pub fn default_world() -> World {
         ambient: sphere1.material.ambient,
         shininess: sphere1.material.shininess,
         pattern: None,
+        reflective: 0.0,
     });
     let mut sphere2 = Object::new_sphere();
     sphere2.set_transform(scaling(0.5, 0.5, 0.5));
@@ -86,6 +103,7 @@ pub struct PreparedComputations<'a> {
     pub normalv: Tuple,
     pub inside: bool,
     pub over_point: Tuple,
+    pub reflectv: Tuple,
 }
 
 pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputations<'a> {
@@ -100,6 +118,8 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
     }
     let over_point = point + normalv * EPSILON;
 
+    let reflectv = r.direction.reflect(normalv);
+
     PreparedComputations {
         object: &i.object,
         t: i.t,
@@ -108,5 +128,6 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         normalv,
         inside,
         over_point,
+        reflectv,
     }
 }

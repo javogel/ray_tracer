@@ -74,20 +74,34 @@ pub fn draw_chapter_9_exercise() {
     // floor.material.color = color(1., 0.9, 0.9);
     // floor.material.specular = 0.;
 
+    let mut back_wall = Object::new_plane();
+    back_wall.transform = translation(0., 0., 7.) * rotation_x(PI / 2.);
+    back_wall.material.color = color(0.9, 0.7, 0.6);
+    back_wall.material.specular = 0.2;
+    back_wall.material.reflective = 0.;
+
+    let mut front_wall = Object::new_plane();
+    front_wall.transform = translation(0., 0., -15.) * rotation_x(PI / 2.);
+    front_wall.material.color = color(0.5, 0.2, 0.9);
+    front_wall.material.reflective = 0.;
+
     let mut left_wall = Object::new_plane();
     left_wall.transform = translation(-15., 0., 0.) * rotation_z(PI / 2.);
     left_wall.material.color = color(1., 0.9, 0.3);
     left_wall.material.specular = 0.2;
+    left_wall.material.reflective = 0.;
 
     let mut right_wall = Object::new_plane();
     right_wall.transform = translation(15., 0., 0.) * rotation_z(PI / 2.);
     right_wall.material.color = color(1., 0.9, 0.3);
     right_wall.material.specular = 0.5;
+    right_wall.material.reflective = 0.;
 
     let mut ceiling = Object::new_plane();
     ceiling.transform = translation(0., 10., 0.);
     ceiling.material.color = color(0.5, 0.8, 0.9);
     ceiling.material.specular = 0.9;
+    ceiling.material.reflective = 0.;
 
     let mut middle = Object::new_sphere();
     middle.transform = translation(-0.5, 1., 0.5);
@@ -98,6 +112,7 @@ pub fn draw_chapter_9_exercise() {
     let mut pattern = stripe_pattern(color(1., 1., 1.), color(0., 0., 0.));
     pattern.transform = scaling(0.2, 0.2, 0.2) * rotation_x(PI);
     middle.material.pattern = Some(Box::new(pattern));
+    middle.material.reflective = 0.5;
 
     let mut right = Object::new_sphere();
     right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
@@ -105,6 +120,7 @@ pub fn draw_chapter_9_exercise() {
     right.material.color = color(0.56, 0.3, 0.8);
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
+    right.material.reflective = 0.5;
 
     let mut left = Object::new_sphere();
     left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
@@ -112,12 +128,15 @@ pub fn draw_chapter_9_exercise() {
     left.material.color = color(1.0, 0.8, 0.4);
     left.material.diffuse = 0.7;
     left.material.specular = 0.8;
+    left.material.reflective = 0.5;
 
     let w = world(
         point_light(point(-5., 5., -10.), color(1., 1., 1.)),
-        vec![floor, left_wall, right_wall, ceiling, middle, left, right],
+        vec![
+            floor, back_wall, front_wall, left_wall, right_wall, ceiling, middle, left, right,
+        ],
     );
-    let mut camera = camera(1200, 800, PI / 3.);
+    let mut camera = camera(1000, 1000, PI / 3.);
 
     camera.transform = view_transform(point(0., 1.5, -5.), point(0., 1., 0.), vector(0., 1., 0.));
 
@@ -126,6 +145,6 @@ pub fn draw_chapter_9_exercise() {
 
     c.save(
         ray_tracer::canvas::ImageType::PPM,
-        "chapter9-striped-parallel-1200x800",
+        "chapter11-reflective-room-2",
     );
 }

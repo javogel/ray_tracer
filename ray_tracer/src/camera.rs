@@ -4,6 +4,7 @@ use crate::{
     ray::{ray, Ray},
     transforms::translation,
     tuple::{point, Tuple},
+    utils::RECURSION_DEPTH,
     world::World,
 };
 use rayon::prelude::*;
@@ -94,7 +95,7 @@ pub fn render(camera: Camera, world: World) -> Canvas {
         for x in 0..camera.hsize {
             let ray = &camera.ray_for_pixel(x, y);
 
-            let color = world.color_at(&ray);
+            let color = world.color_at(&ray, RECURSION_DEPTH);
 
             match image.write_pixel(x as usize, y as usize, color) {
                 Err(e) => println!("error rendering to pixel: {:?}", e),
@@ -114,7 +115,7 @@ pub fn render_parallelized(camera: Camera, world: World) -> Canvas {
         // for y in 0..1 {
         for x in 0..width {
             let ray = &camera.ray_for_pixel(x as i16, i as i16);
-            let color = world.color_at(&ray);
+            let color = world.color_at(&ray, RECURSION_DEPTH);
 
             let index = (3 * x) as usize;
             band[index] = color.r;

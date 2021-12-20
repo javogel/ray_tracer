@@ -7,6 +7,7 @@ pub struct Material {
     pub specular: f64,
     pub shininess: f64,
     pub pattern: Option<Box<dyn Pattern>>,
+    pub reflective: f64,
 }
 
 pub fn default_material() -> Material {
@@ -17,6 +18,7 @@ pub fn default_material() -> Material {
         specular: 0.9,
         shininess: 200.,
         pattern: None,
+        reflective: 0.0,
     }
 }
 pub fn material() -> Material {
