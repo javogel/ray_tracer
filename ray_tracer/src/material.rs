@@ -8,6 +8,8 @@ pub struct Material {
     pub shininess: f64,
     pub pattern: Option<Box<dyn Pattern>>,
     pub reflective: f64,
+    pub transparency: f64,
+    pub refractive_index: f64,
 }
 
 pub fn default_material() -> Material {
@@ -19,6 +21,8 @@ pub fn default_material() -> Material {
         shininess: 200.,
         pattern: None,
         reflective: 0.0,
+        transparency: 0.0,
+        refractive_index: 1.0,
     }
 }
 pub fn material() -> Material {
@@ -40,6 +44,9 @@ impl PartialEq for Material {
             && self.ambient == other.ambient
             && self.diffuse == other.diffuse
             && self.shininess == other.shininess
-            && self.specular == other.specular;
+            && self.specular == other.specular
+            && self.reflective == other.reflective
+            && self.transparency == other.transparency
+            && self.refractive_index == other.refractive_index;
     }
 }

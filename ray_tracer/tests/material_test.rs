@@ -10,4 +10,6 @@ fn creating_default_material() {
     assert_eq!(material.specular, 0.9);
     assert_eq!(material.shininess, 200.);
     assert_eq!(material.reflective, 0.);
+    assert_eq!(material.transparency, 0.);
+    assert_eq!(material.refractive_index, 1.);
 }

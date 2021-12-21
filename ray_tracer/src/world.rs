@@ -88,6 +88,8 @@ pub fn default_world() -> World {
         shininess: sphere1.material.shininess,
         pattern: None,
         reflective: 0.0,
+        transparency: 0.,
+        refractive_index: 1.,
     });
     let mut sphere2 = Object::new_sphere();
     sphere2.set_transform(scaling(0.5, 0.5, 0.5));

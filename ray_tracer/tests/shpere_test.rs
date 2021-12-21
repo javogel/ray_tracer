@@ -103,3 +103,11 @@ fn change_to_sphere_transform() {
     s.set_transform(t.clone());
     assert_eq!(s.transform, t);
 }
+
+#[test]
+fn change_to_sphere_transform() {
+    let mut s = Object::new_glass_sphere();
+    let m = &s.material;
+    assert_eq!(s.transparency, 1.);
+    assert_eq!(s.refractive_index, 1.5);
+}
