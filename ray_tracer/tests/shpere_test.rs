@@ -105,9 +105,9 @@ fn change_to_sphere_transform() {
 }
 
 #[test]
-fn change_to_sphere_transform() {
-    let mut s = Object::new_glass_sphere();
+fn a_helper_for_producing_sphere_with_glassy_material() {
+    let s = Object::new_glass_sphere();
     let m = &s.material;
-    assert_eq!(s.transparency, 1.);
-    assert_eq!(s.refractive_index, 1.5);
+    assert_eq!(m.transparency, 1.);
+    assert_eq!(m.refractive_index, 1.5);
 }

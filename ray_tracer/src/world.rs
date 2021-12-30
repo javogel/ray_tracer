@@ -42,8 +42,9 @@ impl World {
         );
 
         let reflected = self.reflected_color(c, remaining);
+        let refracted = self.refracted_color(c, remaining);
 
-        return surface + reflected;
+        return surface + reflected + refracted;
     }
 
     pub fn color_at(&self, r: &Ray, remaining_depth: u8) -> Color {
@@ -51,7 +52,7 @@ impl World {
 
         return match intersections.hit() {
             Some(i) => {
-                let comps = prepare_computations(&i, r);
+                let comps = prepare_computations(&i, r, &intersections);
                 self.shade_hit(&comps, remaining_depth)
             }
             None => color(0., 0., 0.),
@@ -68,6 +69,26 @@ impl World {
         let reflected_color = self.color_at(&reflected_ray, remaining - 1);
 
         return reflected_color * comps.object.material.reflective;
+    }
+
+    pub fn refracted_color(&self, comps: &PreparedComputations, remaining: u8) -> Color {
+        if comps.object.material.transparency == 0. || remaining <= 0 {
+            return color(0., 0., 0.);
+        }
+
+        let n_ratio = comps.n1 / comps.n2;
+        let cos_i = comps.eyev.dot(comps.normalv);
+        let sin2_t = n_ratio.powi(2) * (1. - cos_i.powi(2));
+        if sin2_t > 1. {
+            return color(0., 0., 0.);
+        }
+
+        let cos_t = (1.0 - sin2_t).sqrt();
+        let direction = comps.normalv * (n_ratio * cos_i - cos_t) - comps.eyev * n_ratio;
+
+        let refracted_ray = ray(comps.under_point, direction);
+
+        return self.color_at(&refracted_ray, remaining - 1) * comps.object.material.transparency;
     }
 }
 pub fn world(light: PointLight, objects: Vec<Object>) -> World {
@@ -106,9 +127,16 @@ pub struct PreparedComputations<'a> {
     pub inside: bool,
     pub over_point: Tuple,
     pub reflectv: Tuple,
+    pub n1: f64,
+    pub n2: f64,
+    pub under_point: Tuple,
 }
 
-pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputations<'a> {
+pub fn prepare_computations<'a>(
+    i: &'a Intersection,
+    r: &Ray,
+    xs: &Intersect,
+) -> PreparedComputations<'a> {
     let point = r.position(i.t);
     let mut normalv = i.object.normal_at(point);
     let eyev = -r.direction;
@@ -119,8 +147,38 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         inside = true
     }
     let over_point = point + normalv * EPSILON;
+    let under_point = point - normalv * EPSILON;
 
     let reflectv = r.direction.reflect(normalv);
+
+    let mut containers: Vec<&Intersection> = vec![];
+    let mut n1 = 0.0;
+    let mut n2 = 0.0;
+
+    for intersect in xs.locations.iter() {
+        if i == intersect {
+            if containers.is_empty() {
+                n1 = 1.0
+            } else {
+                n1 = containers.last().unwrap().object.material.refractive_index
+            }
+        }
+
+        if let Some(index) = containers.iter().position(|value| *value == intersect) {
+            containers.swap_remove(index);
+        } else {
+            containers.push(intersect)
+        }
+
+        if i == intersect {
+            if containers.is_empty() {
+                n2 = 1.0
+            } else {
+                n2 = containers.last().unwrap().object.material.refractive_index
+            }
+            break;
+        }
+    }
 
     PreparedComputations {
         object: &i.object,
@@ -131,5 +189,8 @@ pub fn prepare_computations<'a>(i: &'a Intersection, r: &Ray) -> PreparedComputa
         inside,
         over_point,
         reflectv,
+        n1,
+        n2,
+        under_point,
     }
 }

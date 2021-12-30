@@ -1,5 +1,5 @@
 use crate::{
-    color::Color,
+    color::{color, Color},
     matrix::{identity, Matrix},
     shapes::object::Object,
     tuple::Tuple,
@@ -14,6 +14,20 @@ pub trait Pattern: Send + Sync {
         let object_point = shape.transform.inverse().unwrap() * world_point;
         let pattern_point = self.transform().inverse().unwrap() * object_point;
         self.at_point(pattern_point)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct TestPattern {
+    pub transform: Matrix<f64>,
+}
+impl Pattern for TestPattern {
+    fn transform(&self) -> &Matrix<f64> {
+        &self.transform
+    }
+
+    fn at_point(&self, point: Tuple) -> Color {
+        color(point.x, point.y, point.z)
     }
 }
 
@@ -89,12 +103,18 @@ impl Pattern for CheckerPattern {
     }
 
     fn at_point(&self, point: Tuple) -> Color {
-        let val = point.x.abs() + point.y.abs() + point.z.abs();
+        let val = (point.x.abs() + point.y.abs() + point.z.abs()).floor();
         if val % 2. == 0. {
             self.a
         } else {
             self.b
         }
+    }
+}
+
+pub fn test_pattern() -> TestPattern {
+    TestPattern {
+        transform: identity(),
     }
 }
 

@@ -3,6 +3,8 @@ use ray_tracer::shapes::object::*;
 use ray_tracer::transforms::scaling;
 use ray_tracer::transforms::translation;
 use ray_tracer::tuple::*;
+use ray_tracer::utils::EPSILON;
+use ray_tracer::world::prepare_computations;
 
 #[test]
 fn ray_creation() {
@@ -210,4 +212,54 @@ fn intersect_translated_sphere_with_ray() {
     shape.set_transform(translation(5., 0., 0.));
     let xs = intersect(&r, &shape);
     assert_eq!(xs.count(), 0);
+}
+
+#[test]
+fn finding_n1_and_n2_at_various_intersections() {
+    let mut a = Object::new_glass_sphere();
+    a.transform = scaling(2., 2., 2.);
+    a.material.refractive_index = 1.5;
+
+    let mut b = Object::new_glass_sphere();
+    b.transform = translation(0., 0., -0.25);
+    b.material.refractive_index = 2.0;
+
+    let mut c = Object::new_glass_sphere();
+    c.transform = translation(0., 0., 0.25);
+    c.material.refractive_index = 2.5;
+
+    let r = ray(point(0., 0., -4.), vector(0., 0., 1.));
+    let xs = intersections(vec![
+        intersection(2.0, &a),
+        intersection(2.75, &b),
+        intersection(3.25, &c),
+        intersection(4.75, &b),
+        intersection(5.25, &c),
+        intersection(6., &a),
+    ]);
+
+    let expected_n = [
+        [1.0, 1.5],
+        [1.5, 2.0],
+        [2.0, 2.5],
+        [2.5, 2.5],
+        [2.5, 1.5],
+        [1.5, 1.0],
+    ];
+    for (index, element) in xs.locations.iter().enumerate() {
+        let comps = prepare_computations(element, &r, &xs);
+        assert_eq!(expected_n[index][0], comps.n1);
+        assert_eq!(expected_n[index][1], comps.n2);
+    }
+}
+
+#[test]
+fn the_under_point_is_offset_below_the_surface() {
+    let r = ray(point(0., 0., -5.), vector(0., 0., 1.));
+    let mut shape = Object::new_glass_sphere();
+    shape.transform = translation(0., 0., 1.);
+    let xs = intersections(vec![intersection(5.0, &shape)]);
+    let comps = prepare_computations(&xs.locations[0], &r, &xs);
+    assert!(comps.under_point.z > EPSILON / 2.);
+    assert!(comps.point.z < comps.under_point.z);
 }

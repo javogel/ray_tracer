@@ -82,7 +82,7 @@ impl PartialEq for Color {
     fn eq(&self, other: &Self) -> bool {
         let e = EPSILON;
         let Color { r, g, b } = self;
-        r - other.r < e && g - other.g < e && b - other.b < e
+        (r - other.r).abs() < e && (g - other.g).abs() < e && (b - other.b).abs() < e
     }
 }
 

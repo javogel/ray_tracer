@@ -70,7 +70,7 @@ impl Object {
 
     pub fn new_glass_sphere() -> Self {
         let s = default_sphere();
-        let obj = Self::new(Shape::Sphere(s));
+        let mut obj = Self::new(Shape::Sphere(s));
         obj.material.transparency = 1.;
         obj.material.refractive_index = 1.5;
         return obj;

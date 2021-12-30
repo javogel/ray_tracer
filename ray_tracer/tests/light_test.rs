@@ -96,7 +96,7 @@ fn lighting_with_eye_in_path_of_reflection_vector() {
         false,
     );
 
-    assert_eq!(result, color(1.6464, 1.6464, 1.6464));
+    assert_eq!(result, color(1.6364, 1.6364, 1.6364));
 }
 
 #[test]
