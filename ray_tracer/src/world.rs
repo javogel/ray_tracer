@@ -44,7 +44,14 @@ impl World {
         let reflected = self.reflected_color(c, remaining);
         let refracted = self.refracted_color(c, remaining);
 
-        return surface + reflected + refracted;
+        let material = &c.object.material;
+
+        if material.reflective > 0. && material.transparency > 0. {
+            let reflectance = schlick(c);
+            return surface + reflected * reflectance + refracted * (1.0 - reflectance);
+        } else {
+            return surface + reflected + refracted;
+        }
     }
 
     pub fn color_at(&self, r: &Ray, remaining_depth: u8) -> Color {
@@ -193,4 +200,20 @@ pub fn prepare_computations<'a>(
         n2,
         under_point,
     }
+}
+
+pub fn schlick(comps: &PreparedComputations) -> f64 {
+    let mut cos = comps.eyev.dot(comps.normalv);
+    if comps.n1 > comps.n2 {
+        let n = comps.n1 / comps.n2;
+        let sin2_t = n.powi(2) * (1.0 - cos.powi(2));
+        if sin2_t > 1.0 {
+            return 1.0;
+        }
+        let cos_t = (1.0 - sin2_t).sqrt();
+        cos = cos_t;
+    }
+
+    let r0 = ((comps.n1 - comps.n2) / (comps.n1 + comps.n2)).powi(2);
+    return r0 + (1.0 - r0) * (1.0 - cos).powi(5);
 }

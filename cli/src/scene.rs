@@ -6,8 +6,8 @@ use ray_tracer::{
     camera::{camera, render, render_parallelized, view_transform},
     color::color,
     light::point_light,
-    material::material,
-    pattern::stripe_pattern,
+    material::{default_material, material},
+    pattern::*,
     shapes::object::Object,
     transforms::*,
     tuple::*,
@@ -69,16 +69,27 @@ pub fn draw_chapter_7_exercise() {
 }
 
 pub fn draw_chapter_9_exercise() {
-    let floor = Object::new_plane();
-    // floor.transform = scaling(10., 0.01, 10.);
+    let mut floor = Object::new_plane();
+    // floor.transform = scaling(10., 10., 10.);
     // floor.material.color = color(1., 0.9, 0.9);
     // floor.material.specular = 0.;
+    {
+        let mut pattern = gradient_pattern(color(0.5, 0.2, 0.9), color(0.33, 0.44, 0.99));
+        pattern.transform = translation(0., 0., 5.) * scaling(10., 10., 10.) * rotation_y(PI / 2.);
+        floor.material.pattern = Some(Box::new(pattern));
+        floor.material.reflective = 0.0;
+    }
 
     let mut back_wall = Object::new_plane();
     back_wall.transform = translation(0., 0., 7.) * rotation_x(PI / 2.);
-    back_wall.material.color = color(0.9, 0.7, 0.6);
-    back_wall.material.specular = 0.2;
-    back_wall.material.reflective = 0.;
+    // back_wall.material.color = color(0.9, 0.7, 0.6);
+    // back_wall.material.specular = 0.2;
+    back_wall.material.reflective = 0.1;
+    {
+        let mut pattern = stripe_pattern(color(0.91, 0.4, 0.2), color(0.2, 0.54, 0.80));
+        pattern.transform = scaling(1.0, 1.0, 1.) * rotation_x(PI);
+        back_wall.material.pattern = Some(Box::new(pattern));
+    }
 
     let mut front_wall = Object::new_plane();
     front_wall.transform = translation(0., 0., -15.) * rotation_x(PI / 2.);
@@ -104,18 +115,17 @@ pub fn draw_chapter_9_exercise() {
     ceiling.material.reflective = 0.;
 
     let mut middle = Object::new_sphere();
-    middle.transform = translation(-0.5, 1., 0.5);
-    middle.material = material();
-    middle.material.color = color(0.1, 1., 0.5);
-    middle.material.diffuse = 0.7;
-    middle.material.specular = 0.3;
-    let mut pattern = stripe_pattern(color(1., 1., 1.), color(0., 0., 0.));
-    pattern.transform = scaling(0.2, 0.2, 0.2) * rotation_x(PI);
-    middle.material.pattern = Some(Box::new(pattern));
-    middle.material.reflective = 0.5;
+    middle.transform = translation(-0.5, 0.5, -2.5) * scaling(0.50, 0.50, 0.50);
+    middle.material = default_material();
+    middle.material.color = color(0., 0., 0.);
+    // middle.material.diffuse = 0.9;
+    // middle.material.specular = 0.9;
+    middle.material.reflective = 1.;
+    middle.material.transparency = 1.0;
+    middle.material.refractive_index = 1.5;
 
     let mut right = Object::new_sphere();
-    right.transform = translation(1.5, 0.5, -0.5) * scaling(0.5, 0.5, 0.5);
+    right.transform = translation(1.5, 0.5, 0.5) * scaling(0.5, 0.5, 0.5);
     right.material = material();
     right.material.color = color(0.56, 0.3, 0.8);
     right.material.diffuse = 0.7;
@@ -123,7 +133,7 @@ pub fn draw_chapter_9_exercise() {
     right.material.reflective = 0.5;
 
     let mut left = Object::new_sphere();
-    left.transform = translation(-1.5, 0.33, -0.75) * scaling(0.33, 0.33, 0.33);
+    left.transform = translation(-1.5, 0.33, 0.75) * scaling(0.33, 0.33, 0.33);
     left.material = material();
     left.material.color = color(1.0, 0.8, 0.4);
     left.material.diffuse = 0.7;
@@ -136,7 +146,7 @@ pub fn draw_chapter_9_exercise() {
             floor, back_wall, front_wall, left_wall, right_wall, ceiling, middle, left, right,
         ],
     );
-    let mut camera = camera(1000, 1000, PI / 3.);
+    let mut camera = camera(1200, 1200, PI / 3.);
 
     camera.transform = view_transform(point(0., 1.5, -5.), point(0., 1., 0.), vector(0., 1., 0.));
 
@@ -145,6 +155,6 @@ pub fn draw_chapter_9_exercise() {
 
     c.save(
         ray_tracer::canvas::ImageType::PPM,
-        "chapter11-reflective-room-2",
+        "chapter11-refraction-exploration",
     );
 }
